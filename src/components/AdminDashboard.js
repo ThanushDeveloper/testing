@@ -16,16 +16,6 @@ function AdminDashboard({ auth, setAuth }) {
     const themeToggle = document.getElementById("themeToggle");
     const themeIcon = document.getElementById("themeIcon");
 
-    function updateThemeIcon(currentTheme) {
-      if (themeIcon) {
-        if (currentTheme === "dark") {
-          themeIcon.className = "fas fa-moon";
-        } else {
-          themeIcon.className = "fas fa-sun";
-        }
-      }
-    }
-
     function handleThemeToggle() {
       const newTheme = theme === "dark" ? "light" : "dark";
       setTheme(newTheme);
@@ -67,6 +57,7 @@ function AdminDashboard({ auth, setAuth }) {
 
     const navLinks = document.querySelectorAll(".nav-link");
     const sections = document.querySelectorAll(".section");
+    const navClickHandlers = [];
 
 
 
