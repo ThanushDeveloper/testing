@@ -558,8 +558,17 @@ function AdminDashboard({ auth, setAuth }) {
     //   }, duration);
     // }
 
+    // Set initial styles for animation
+    document.body.style.opacity = "0";
+    document.body.style.transition = "opacity 0.3s ease";
+    
     const statCards = document.querySelectorAll(".stat-card");
     statCards.forEach((card) => {
+      card.style.opacity = "0";
+      card.style.transform = "translateY(20px)";
+      card.style.transition = "all 0.6s ease";
+      
+      // Add hover effects
       card.addEventListener("mouseenter", () => {
         card.style.transform = "translateY(-8px) scale(1.02)";
       });
@@ -568,7 +577,8 @@ function AdminDashboard({ auth, setAuth }) {
       });
     });
 
-    window.addEventListener("load", () => {
+    // Animate in after a short delay to ensure DOM is ready
+    setTimeout(() => {
       document.body.style.opacity = "1";
       const cards = document.querySelectorAll(".stat-card");
       cards.forEach((card, index) => {
@@ -577,15 +587,13 @@ function AdminDashboard({ auth, setAuth }) {
           card.style.transform = "translateY(0)";
         }, index * 100);
       });
-    });
+    }, 100);
 
-    document.body.style.opacity = "0";
-    document.body.style.transition = "opacity 0.3s ease";
-    statCards.forEach((card) => {
-      card.style.opacity = "0";
-      card.style.transform = "translateY(20px)";
-      card.style.transition = "all 0.6s ease";
-    });
+    // Cleanup function to restore body opacity when component unmounts
+    return () => {
+      document.body.style.opacity = "";
+      document.body.style.transition = "";
+    };
   }, []);
 
   return (
