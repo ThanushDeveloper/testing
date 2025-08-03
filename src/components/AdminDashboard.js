@@ -1,62 +1,79 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/AdminDashboard.css";
 
 // const AdminDashboard = () => {
 function AdminDashboard({ auth, setAuth }) {
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem("theme") || "dark";
+  });
 
   useEffect(() => {
+    // Apply theme to body
+    document.body.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+    
     // Theme Toggle Functionality
     const themeToggle = document.getElementById("themeToggle");
     const themeIcon = document.getElementById("themeIcon");
-    const body = document.body;
 
-    const currentTheme = localStorage.getItem("theme") || "dark";
-    body.setAttribute("data-theme", currentTheme);
-    updateThemeIcon(currentTheme);
-
-    themeToggle.addEventListener("click", () => {
-      const currentTheme = body.getAttribute("data-theme");
-      const newTheme = currentTheme === "dark" ? "light" : "dark";
-
-      body.setAttribute("data-theme", newTheme);
-      localStorage.setItem("theme", newTheme);
-      updateThemeIcon(newTheme);
-    });
-
-    function updateThemeIcon(theme) {
-      if (theme === "dark") {
-        themeIcon.className = "fas fa-moon";
-      } else {
-        themeIcon.className = "fas fa-sun";
+    function updateThemeIcon(currentTheme) {
+      if (themeIcon) {
+        if (currentTheme === "dark") {
+          themeIcon.className = "fas fa-moon";
+        } else {
+          themeIcon.className = "fas fa-sun";
+        }
       }
+    }
+
+    function handleThemeToggle() {
+      const newTheme = theme === "dark" ? "light" : "dark";
+      setTheme(newTheme);
+    }
+
+    // Update icon when theme changes
+    updateThemeIcon(theme);
+
+    // Add event listener
+    if (themeToggle) {
+      themeToggle.addEventListener("click", handleThemeToggle);
     }
 
     const mobileMenuBtn = document.getElementById("mobileMenuBtn");
     const sidebar = document.getElementById("sidebar");
 
-    mobileMenuBtn.addEventListener("click", () => {
+    function handleMobileMenuClick() {
       sidebar.classList.toggle("open");
-    });
+    }
 
-    document.addEventListener("click", (e) => {
+    function handleDocumentClick(e) {
       if (window.innerWidth <= 1024) {
         if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
           sidebar.classList.remove("open");
         }
       }
-    });
+    }
 
-    window.addEventListener("resize", () => {
+    function handleWindowResize() {
       if (window.innerWidth > 1024) {
         sidebar.classList.remove("open");
       }
-    });
+    }
+
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener("click", handleMobileMenuClick);
+    }
+
+    document.addEventListener("click", handleDocumentClick);
+    window.addEventListener("resize", handleWindowResize);
 
     const navLinks = document.querySelectorAll(".nav-link");
     const sections = document.querySelectorAll(".section");
 
+    const navClickHandlers = [];
+
     navLinks.forEach((link) => {
-      link.addEventListener("click", (e) => {
+      const handler = (e) => {
         e.preventDefault();
         navLinks.forEach((l) => l.classList.remove("active"));
         link.classList.add("active");
@@ -64,7 +81,9 @@ function AdminDashboard({ auth, setAuth }) {
           .querySelector("span")
           .textContent.toLowerCase();
         showSection(sectionName);
-      });
+      };
+      link.addEventListener("click", handler);
+      navClickHandlers.push({ link, handler });
     });
 
     function showSection(sectionName) {
@@ -514,28 +533,52 @@ function AdminDashboard({ auth, setAuth }) {
     // });
 
     const searchInput = document.querySelector(".search-input");
-    searchInput.addEventListener("focus", () => {
-      searchInput.parentElement.style.transform = "scale(1.02)";
-    });
-    searchInput.addEventListener("blur", () => {
-      searchInput.parentElement.style.transform = "scale(1)";
-    });
+    
+    function handleSearchFocus() {
+      if (searchInput && searchInput.parentElement) {
+        searchInput.parentElement.style.transform = "scale(1.02)";
+      }
+    }
 
-    document.addEventListener("keydown", (e) => {
+    function handleSearchBlur() {
+      if (searchInput && searchInput.parentElement) {
+        searchInput.parentElement.style.transform = "scale(1)";
+      }
+    }
+
+    function handleKeydown(e) {
       if ((e.ctrlKey || e.metaKey) && e.key === "k") {
         e.preventDefault();
-        searchInput.focus();
+        if (searchInput) {
+          searchInput.focus();
+        }
       }
-    });
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener("focus", handleSearchFocus);
+      searchInput.addEventListener("blur", handleSearchBlur);
+    }
+
+    document.addEventListener("keydown", handleKeydown);
 
     const notificationBtn = document.querySelector(".notification-btn");
-    notificationBtn.addEventListener("click", () => {
-      const badge = notificationBtn.querySelector(".notification-badge");
-      badge.style.animation = "none";
-      setTimeout(() => {
-        badge.style.animation = "pulse 0.5s ease-in-out";
-      }, 10);
-    });
+    
+    function handleNotificationClick() {
+      if (notificationBtn) {
+        const badge = notificationBtn.querySelector(".notification-badge");
+        if (badge) {
+          badge.style.animation = "none";
+          setTimeout(() => {
+            badge.style.animation = "pulse 0.5s ease-in-out";
+          }, 10);
+        }
+      }
+    }
+
+    if (notificationBtn) {
+      notificationBtn.addEventListener("click", handleNotificationClick);
+    }
 
     const style = document.createElement("style");
     style.textContent = `
@@ -599,11 +642,46 @@ function AdminDashboard({ auth, setAuth }) {
   //   });
   // }, []);
 
+    // Cleanup function
     return () => {
+      // Remove theme toggle listener
+      if (themeToggle) {
+        themeToggle.removeEventListener("click", handleThemeToggle);
+      }
+
+      // Remove mobile menu listener
+      if (mobileMenuBtn) {
+        mobileMenuBtn.removeEventListener("click", handleMobileMenuClick);
+      }
+
+      // Remove document and window listeners
+      document.removeEventListener("click", handleDocumentClick);
+      window.removeEventListener("resize", handleWindowResize);
+
+      // Remove navigation listeners
+      navClickHandlers.forEach(({ link, handler }) => {
+        link.removeEventListener("click", handler);
+      });
+
+      // Remove search input listeners
+      if (searchInput) {
+        searchInput.removeEventListener("focus", handleSearchFocus);
+        searchInput.removeEventListener("blur", handleSearchBlur);
+      }
+
+      // Remove keydown listener
+      document.removeEventListener("keydown", handleKeydown);
+
+      // Remove notification listener
+      if (notificationBtn) {
+        notificationBtn.removeEventListener("click", handleNotificationClick);
+      }
+
+      // Reset body styles
       document.body.style.opacity = "";
       document.body.style.transition = "";
     };
-  }, []);
+  }, [theme]); // Add theme as dependency
 
 
   return (
