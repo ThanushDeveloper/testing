@@ -1,0 +1,1142 @@
+import React, { useEffect } from "react";
+import "../styles/AdminDashboard.css";
+
+// const AdminDashboard = () => {
+function AdminDashboard() {
+  useEffect(() => {
+    // Theme Toggle Functionality
+    const themeToggle = document.getElementById("themeToggle");
+    const themeIcon = document.getElementById("themeIcon");
+    const body = document.body;
+
+    const currentTheme = localStorage.getItem("theme") || "dark";
+    body.setAttribute("data-theme", currentTheme);
+    updateThemeIcon(currentTheme);
+
+    themeToggle.addEventListener("click", () => {
+      const currentTheme = body.getAttribute("data-theme");
+      const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+      body.setAttribute("data-theme", newTheme);
+      localStorage.setItem("theme", newTheme);
+      updateThemeIcon(newTheme);
+    });
+
+    function updateThemeIcon(theme) {
+      if (theme === "dark") {
+        themeIcon.className = "fas fa-moon";
+      } else {
+        themeIcon.className = "fas fa-sun";
+      }
+    }
+
+    const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+    const sidebar = document.getElementById("sidebar");
+
+    mobileMenuBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (window.innerWidth <= 1024) {
+        if (!sidebar.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+          sidebar.classList.remove("open");
+        }
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      if (window.innerWidth > 1024) {
+        sidebar.classList.remove("open");
+      }
+    });
+
+    const navLinks = document.querySelectorAll(".nav-link");
+    const sections = document.querySelectorAll(".section");
+
+    navLinks.forEach((link) => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        navLinks.forEach((l) => l.classList.remove("active"));
+        link.classList.add("active");
+        const sectionName = link
+          .querySelector("span")
+          .textContent.toLowerCase();
+        showSection(sectionName);
+      });
+    });
+
+    function showSection(sectionName) {
+      sections.forEach((section) => section.classList.remove("active"));
+      let targetSection;
+      switch (sectionName) {
+        case "dashboard":
+          targetSection = document.getElementById("dashboard-section");
+          break;
+        case "patient":
+          targetSection = document.getElementById("patient-section");
+          break;
+        case "doctor":
+          targetSection = document.getElementById("doctor-section");
+          break;
+        default:
+          targetSection = document.getElementById("dashboard-section");
+      }
+      if (targetSection) {
+        targetSection.classList.add("active");
+      }
+    }
+
+    function initTabNavigation() {
+      const tabButtons = document.querySelectorAll(".tab-btn");
+      tabButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const tabName = button.getAttribute("data-tab");
+          const parentSection = button.closest(".section");
+          parentSection
+            .querySelectorAll(".tab-btn")
+            .forEach((btn) => btn.classList.remove("active"));
+          parentSection
+            .querySelectorAll(".tab-content")
+            .forEach((content) => content.classList.remove("active"));
+          button.classList.add("active");
+          const targetContent = document.getElementById(tabName);
+          if (targetContent) {
+            targetContent.classList.add("active");
+          }
+        });
+      });
+    }
+
+    let patients = [
+      {
+        id: "P001",
+        name: "John Smith",
+        email: "john.smith@email.com",
+        phone: "+1-555-0123",
+        gender: "male",
+        treatmentType: "cardiology",
+        status: "active",
+      },
+      {
+        id: "P002",
+        name: "Sarah Johnson",
+        email: "sarah.j@email.com",
+        phone: "+1-555-0124",
+        gender: "female",
+        treatmentType: "general",
+        status: "active",
+      },
+      {
+        id: "P003",
+        name: "Michael Brown",
+        email: "michael.b@email.com",
+        phone: "+1-555-0125",
+        gender: "male",
+        treatmentType: "orthopedics",
+        status: "inactive",
+      },
+    ]; // omitted for brevity
+    let doctors = [
+      {
+        id: "D001",
+        name: "Dr. Emily Wilson",
+        email: "emily.wilson@hospital.com",
+        phone: "+1-555-0201",
+        specialization: "cardiology",
+        experience: 12,
+        status: "active",
+      },
+      {
+        id: "D002",
+        name: "Dr. James Davis",
+        email: "james.davis@hospital.com",
+        phone: "+1-555-0202",
+        specialization: "neurology",
+        experience: 8,
+        status: "active",
+      },
+      {
+        id: "D003",
+        name: "Dr. Lisa Anderson",
+        email: "lisa.anderson@hospital.com",
+        phone: "+1-555-0203",
+        specialization: "pediatrics",
+        experience: 15,
+        status: "active",
+      },
+    ];
+
+    function initFormHandling() {
+      const patientForm = document.getElementById("patient-form");
+      if (patientForm) {
+        patientForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const formData = new FormData(patientForm);
+          const patientData = Object.fromEntries(formData);
+
+          // Generate ID
+          patientData.id = "P" + String(patients.length + 1).padStart(3, "0");
+          patientData.status = "active";
+
+          // Add to patients array
+          patients.push(patientData);
+
+          // Reset form
+          patientForm.reset();
+
+          // Show success message
+          alert("Patient registered successfully!");
+
+          // Refresh patient table if visible
+          if (
+            document.getElementById("patient-list").classList.contains("active")
+          ) {
+            renderPatientTable();
+          }
+        });
+      }
+
+      // Doctor Form
+      const doctorForm = document.getElementById("doctor-form");
+      if (doctorForm) {
+        doctorForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const formData = new FormData(doctorForm);
+          const doctorData = Object.fromEntries(formData);
+
+          // Generate ID
+          doctorData.id = "D" + String(doctors.length + 1).padStart(3, "0");
+          doctorData.status = "active";
+
+          // Add to doctors array
+          doctors.push(doctorData);
+
+          // Reset form
+          doctorForm.reset();
+
+          // Show success message
+          alert("Doctor registered successfully!");
+
+          // Refresh doctor table if visible
+          if (
+            document.getElementById("doctor-list").classList.contains("active")
+          ) {
+            renderDoctorTable();
+          }
+        });
+      }
+    }
+    function renderPatientTable(filteredPatients = patients) {
+      const tbody = document.getElementById("patient-table-body");
+      if (!tbody) return;
+
+      tbody.innerHTML = "";
+
+      if (filteredPatients.length === 0) {
+        tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="empty-state">
+                            <i class="fas fa-user-injured"></i>
+                            <p>No patients found</p>
+                        </td>
+                    </tr>
+                `;
+        return;
+      }
+
+      filteredPatients.forEach((patient) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+                    <td>${patient.id}</td>
+                    <td>${patient.name}</td>
+                    <td>${patient.email}</td>
+                    <td>${patient.phone}</td>
+                    <td>${
+                      patient.gender
+                        ? patient.gender.charAt(0).toUpperCase() +
+                          patient.gender.slice(1)
+                        : "N/A"
+                    }</td>
+                    <td>${
+                      patient.treatmentType
+                        ? patient.treatmentType.charAt(0).toUpperCase() +
+                          patient.treatmentType.slice(1)
+                        : "N/A"
+                    }</td>
+                    <td><span class="status-badge status-${patient.status}">${
+          patient.status.charAt(0).toUpperCase() + patient.status.slice(1)
+        }</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-small btn-edit" onclick="editPatient('${
+                              patient.id
+                            }')" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-small btn-delete" onclick="deletePatient('${
+                              patient.id
+                            }')" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+        tbody.appendChild(row);
+      });
+    }
+    function renderDoctorTable(filteredDoctors = doctors) {
+      const tbody = document.getElementById("doctor-table-body");
+      if (!tbody) return;
+
+      tbody.innerHTML = "";
+
+      if (filteredDoctors.length === 0) {
+        tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="empty-state">
+                            <i class="fas fa-user-md"></i>
+                            <p>No doctors found</p>
+                        </td>
+                    </tr>
+                `;
+        return;
+      }
+
+      filteredDoctors.forEach((doctor) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+                    <td>${doctor.id}</td>
+                    <td>${doctor.name}</td>
+                    <td>${doctor.email}</td>
+                    <td>${doctor.phone}</td>
+                    <td>${
+                      doctor.specialization
+                        ? doctor.specialization.charAt(0).toUpperCase() +
+                          doctor.specialization.slice(1)
+                        : "N/A"
+                    }</td>
+                    <td>${doctor.experience || 0} years</td>
+                    <td><span class="status-badge status-${doctor.status}">${
+          doctor.status.charAt(0).toUpperCase() + doctor.status.slice(1)
+        }</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-small btn-edit" onclick="editDoctor('${
+                              doctor.id
+                            }')" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-small btn-delete" onclick="deleteDoctor('${
+                              doctor.id
+                            }')" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+        tbody.appendChild(row);
+      });
+    }
+    function initFiltering() {
+      const patientFilter = document.getElementById("patient-filter");
+      const patientSearch = document.getElementById("patient-search");
+
+      if (patientFilter) {
+        patientFilter.addEventListener("change", filterPatients);
+      }
+
+      if (patientSearch) {
+        patientSearch.addEventListener("input", filterPatients);
+      }
+
+      // Doctor filtering
+      const doctorFilter = document.getElementById("doctor-filter");
+      const doctorSearch = document.getElementById("doctor-search");
+
+      if (doctorFilter) {
+        doctorFilter.addEventListener("change", filterDoctors);
+      }
+
+      if (doctorSearch) {
+        doctorSearch.addEventListener("input", filterDoctors);
+      }
+    }
+    function filterPatients() {
+      const filterValue = document.getElementById("patient-filter").value;
+      const searchValue = document
+        .getElementById("patient-search")
+        .value.toLowerCase();
+
+      let filtered = patients;
+
+      // Apply filter
+      if (filterValue !== "all") {
+        filtered = filtered.filter(
+          (patient) =>
+            patient.gender === filterValue ||
+            patient.treatmentType === filterValue
+        );
+      }
+
+      // Apply search
+      if (searchValue) {
+        filtered = filtered.filter(
+          (patient) =>
+            patient.name.toLowerCase().includes(searchValue) ||
+            patient.email.toLowerCase().includes(searchValue) ||
+            patient.phone.includes(searchValue)
+        );
+      }
+
+      renderPatientTable(filtered);
+    }
+    function filterDoctors() {
+      const filterValue = document.getElementById("doctor-filter").value;
+      const searchValue = document
+        .getElementById("doctor-search")
+        .value.toLowerCase();
+
+      let filtered = doctors;
+
+      // Apply filter
+      if (filterValue !== "all") {
+        filtered = filtered.filter(
+          (doctor) => doctor.specialization === filterValue
+        );
+      }
+
+      // Apply search
+      if (searchValue) {
+        filtered = filtered.filter(
+          (doctor) =>
+            doctor.name.toLowerCase().includes(searchValue) ||
+            doctor.email.toLowerCase().includes(searchValue) ||
+            doctor.specialization.toLowerCase().includes(searchValue)
+        );
+      }
+
+      renderDoctorTable(filtered);
+    }
+
+    // CRUD Operations
+    // function editPatient(id) {
+    //   const patient = patients.find((p) => p.id === id);
+    //   if (patient) {
+    //     alert(
+    //       `Edit patient: ${patient.name}\n(This would open an edit form in a real application)`
+    //     );
+    //   }
+    // }
+
+    // function deletePatient(id) {
+    //   if (window.confirm("Are you sure you want to delete this patient?")) {
+    //     patients = patients.filter((p) => p.id !== id);
+    //     renderPatientTable();
+    //     alert("Patient deleted successfully!");
+    //   }
+    // }
+
+    // function editDoctor(id) {
+    //   const doctor = doctors.find((d) => d.id === id);
+    //   if (doctor) {
+    //     alert(
+    //       `Edit doctor: ${doctor.name}\n(This would open an edit form in a real application)`
+    //     );
+    //   }
+    // }
+
+    // function deleteDoctor(id) {
+    //   if (window.confirm("Are you sure you want to delete this doctor?")) {
+    //     doctors = doctors.filter((d) => d.id !== id);
+    //     renderDoctorTable();
+    //     alert("Doctor deleted successfully!");
+    //   }
+    // }
+
+    // Initialize everything when DOM is loaded
+    document.addEventListener("DOMContentLoaded", () => {
+      initTabNavigation();
+      initFormHandling();
+      initFiltering();
+
+      // Initial render of tables
+      renderPatientTable();
+      renderDoctorTable();
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initTabNavigation();
+      initFormHandling();
+      initFiltering();
+      renderPatientTable();
+      renderDoctorTable();
+    });
+
+    const searchInput = document.querySelector(".search-input");
+    searchInput.addEventListener("focus", () => {
+      searchInput.parentElement.style.transform = "scale(1.02)";
+    });
+    searchInput.addEventListener("blur", () => {
+      searchInput.parentElement.style.transform = "scale(1)";
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        searchInput.focus();
+      }
+    });
+
+    const notificationBtn = document.querySelector(".notification-btn");
+    notificationBtn.addEventListener("click", () => {
+      const badge = notificationBtn.querySelector(".notification-badge");
+      badge.style.animation = "none";
+      setTimeout(() => {
+        badge.style.animation = "pulse 0.5s ease-in-out";
+      }, 10);
+    });
+
+    const style = document.createElement("style");
+    style.textContent = `
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+      }
+    `;
+    document.head.appendChild(style);
+
+    document.documentElement.style.scrollBehavior = "smooth";
+
+    // function addLoadingState(element, duration = 1000) {
+    //   element.style.opacity = "0.7";
+    //   element.style.pointerEvents = "none";
+    //   setTimeout(() => {
+    //     element.style.opacity = "1";
+    //     element.style.pointerEvents = "auto";
+    //   }, duration);
+    // }
+
+    const statCards = document.querySelectorAll(".stat-card");
+    statCards.forEach((card) => {
+      card.addEventListener("mouseenter", () => {
+        card.style.transform = "translateY(-8px) scale(1.02)";
+      });
+      card.addEventListener("mouseleave", () => {
+        card.style.transform = "translateY(0) scale(1)";
+      });
+    });
+
+    window.addEventListener("load", () => {
+      document.body.style.opacity = "1";
+      const cards = document.querySelectorAll(".stat-card");
+      cards.forEach((card, index) => {
+        setTimeout(() => {
+          card.style.opacity = "1";
+          card.style.transform = "translateY(0)";
+        }, index * 100);
+      });
+    });
+
+    document.body.style.opacity = "0";
+    document.body.style.transition = "opacity 0.3s ease";
+    statCards.forEach((card) => {
+      card.style.opacity = "0";
+      card.style.transform = "translateY(20px)";
+      card.style.transition = "all 0.6s ease";
+    });
+  }, []);
+
+  return (
+    <div className="dashboard-container">
+      {/* sidebar */}
+      <aside className="sidebar" id="sidebar">
+        <div className="sidebar-header">
+          <div className="logo">
+            <div className="logo-icon">
+              <i className="fas fa-heartbeat"></i>
+            </div>
+            <span>MedAdmin</span>
+          </div>
+        </div>
+
+        <nav>
+          <ul className="nav-menu">
+            <li className="nav-item">
+              <a href="/" className="nav-link active">
+                <i className="nav-icon fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li className="nav-item">
+              <a href="/" className="nav-link">
+                <i className="nav-icon fas fa-user-injured"></i>
+                <span>Patient</span>
+              </a>
+            </li>
+            <li className="nav-item">
+              <a href="/" className="nav-link">
+                <i className="nav-icon fas fa-user-md"></i>
+                <span>Doctor</span>
+              </a>
+            </li>
+            <li className="nav-item">
+              <a href="/" className="nav-link">
+                <i className="nav-icon fas fa-prescription-bottle-alt"></i>
+                <span>Prescription</span>
+              </a>
+            </li>
+            <li className="nav-item">
+              <a href="/" className="nav-link">
+                <i className="nav-icon fas fa-user-shield"></i>
+                <span>Admin Register</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      {/* header */}
+
+      <header className="header">
+        <div className="header-left">
+          <button className="mobile-menu-btn" id="mobileMenuBtn">
+            <i className="fas fa-bars"></i>
+          </button>
+
+          <div className="search-container">
+            <i className="search-icon fas fa-search"></i>
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search or type command..."
+            />
+          </div>
+        </div>
+
+        <div className="header-right">
+          <button
+            className="theme-toggle"
+            id="themeToggle"
+            title="Toggle theme"
+          >
+            <i className="fas fa-sun" id="themeIcon"></i>
+          </button>
+
+          <button className="notification-btn" title="Notifications">
+            <i className="fas fa-bell"></i>
+            <span className="notification-badge">3</span>
+          </button>
+
+          <div className="user-profile">
+            <div className="user-avatar">M</div>
+            <div className="user-info">
+              <div className="user-name">Musharof</div>
+              <div className="user-role">Admin</div>
+            </div>
+            <i
+              className="fas fa-chevron-down"
+              style={{ color: "var(--text-secondary)", fontSize: "0.8rem" }}
+            ></i>
+          </div>
+        </div>
+      </header>
+
+      {/* main */}
+
+      <main className="main-content">
+        {/* Dashboard Section */}
+        <div id="dashboard-section" className="section active">
+          <div className="page-header fade-in-up">
+            <nav className="breadcrumb">
+              <span className="breadcrumb-item">Dashboard</span>
+              <i className="breadcrumb-separator fas fa-chevron-right"></i>
+              <span className="breadcrumb-item active">Overview</span>
+            </nav>
+
+            <h1 className="page-title">Dashboard Overview</h1>
+            <p className="page-subtitle">
+              Welcome back! Here's what's happening in your medical facility
+              today.
+            </p>
+          </div>
+
+          {/* Stats Cards */}
+          <div className="stats-grid">
+            <div
+              className="stat-card slide-in-left"
+              style={{ animationDelay: "0.1s" }}
+            >
+              <div className="stat-header">
+                <div>
+                  <div className="stat-title">Total Patients</div>
+                  <div className="stat-value">1,243</div>
+                </div>
+                <div className="stat-icon patients">
+                  <i className="fas fa-user-injured"></i>
+                </div>
+              </div>
+              <div className="stat-change positive">
+                <i className="change-icon fas fa-arrow-up"></i>
+                <span>+5.2%</span>
+                <span className="change-text">from last month</span>
+              </div>
+            </div>
+
+            <div
+              className="stat-card slide-in-left"
+              style={{ animationDelay: "0.2s" }}
+            >
+              <div className="stat-header">
+                <div>
+                  <div className="stat-title">Total Doctors</div>
+                  <div className="stat-value">89</div>
+                </div>
+                <div className="stat-icon doctors">
+                  <i className="fas fa-user-md"></i>
+                </div>
+              </div>
+              <div className="stat-change positive">
+                <i className="change-icon fas fa-arrow-up"></i>
+                <span>+2.1%</span>
+                <span className="change-text">from last week</span>
+              </div>
+            </div>
+
+            <div
+              className="stat-card slide-in-left"
+              style={{ animationDelay: "0.3s" }}
+            >
+              <div className="stat-header">
+                <div>
+                  <div className="stat-title">Total Admins</div>
+                  <div className="stat-value">12</div>
+                </div>
+                <div className="stat-icon admins">
+                  <i className="fas fa-user-shield"></i>
+                </div>
+              </div>
+              <div className="stat-change positive">
+                <i className="change-icon fas fa-arrow-up"></i>
+                <span>+1</span>
+                <span className="change-text">new this month</span>
+              </div>
+            </div>
+
+            <div
+              className="stat-card slide-in-left"
+              style={{ animationDelay: "0.4s" }}
+            >
+              <div className="stat-header">
+                <div>
+                  <div className="stat-title">Total Prescriptions</div>
+                  <div className="stat-value">2,847</div>
+                </div>
+                <div className="stat-icon prescriptions">
+                  <i className="fas fa-prescription-bottle-alt"></i>
+                </div>
+              </div>
+              <div className="stat-change positive">
+                <i className="change-icon fas fa-arrow-up"></i>
+                <span>+8.7%</span>
+                <span className="change-text">from last month</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Patient Section */}
+        <div id="patient-section" className="section">
+          <div className="page-header">
+            <nav className="breadcrumb">
+              <span className="breadcrumb-item">Dashboard</span>
+              <i className="breadcrumb-separator fas fa-chevron-right"></i>
+              <span className="breadcrumb-item active">Patient Management</span>
+            </nav>
+            <h1 className="page-title">Patient Management</h1>
+            <p className="page-subtitle">
+              Manage patient registrations and view patient information.
+            </p>
+          </div>
+
+          {/* Tab Navigation */}
+          <div className="tab-navigation">
+            <button className="tab-btn active" data-tab="patient-register">
+              <i className="fas fa-user-plus"></i> Register Patient
+            </button>
+            <button className="tab-btn" data-tab="patient-list">
+              <i className="fas fa-list"></i> Patient List
+            </button>
+          </div>
+
+          {/* Patient Registration Tab */}
+          <div id="patient-register" className="tab-content active">
+            <div className="form-container">
+              <h2 className="form-title">
+                <i className="fas fa-user-plus"></i>
+                Register New Patient
+              </h2>
+              <form id="patient-form">
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label className="form-label">Full Name *</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      name="fullName"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Email Address *</label>
+                    <input
+                      type="email"
+                      className="form-input"
+                      name="email"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Phone Number *</label>
+                    <input
+                      type="tel"
+                      className="form-input"
+                      name="phone"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Date of Birth *</label>
+                    <input
+                      type="date"
+                      className="form-input"
+                      name="dob"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Gender *</label>
+                    <select className="form-select" name="gender" required>
+                      <option value="">Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Blood Group</label>
+                    <select className="form-select" name="bloodGroup">
+                      <option value="">Select Blood Group</option>
+                      <option value="A+">A+</option>
+                      <option value="A-">A-</option>
+                      <option value="B+">B+</option>
+                      <option value="B-">B-</option>
+                      <option value="AB+">AB+</option>
+                      <option value="AB-">AB-</option>
+                      <option value="O+">O+</option>
+                      <option value="O-">O-</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Emergency Contact</label>
+                    <input
+                      type="tel"
+                      className="form-input"
+                      name="emergencyContact"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Treatment Type</label>
+                    <select className="form-select" name="treatmentType">
+                      <option value="">Select Treatment Type</option>
+                      <option value="general">General Consultation</option>
+                      <option value="cardiology">Cardiology</option>
+                      <option value="neurology">Neurology</option>
+                      <option value="orthopedics">Orthopedics</option>
+                      <option value="pediatrics">Pediatrics</option>
+                      <option value="dermatology">Dermatology</option>
+                      <option value="emergency">Emergency</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Address</label>
+                  <textarea
+                    className="form-textarea"
+                    name="address"
+                    placeholder="Enter full address"
+                  ></textarea>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Medical History</label>
+                  <textarea
+                    className="form-textarea"
+                    name="medicalHistory"
+                    placeholder="Enter relevant medical history"
+                  ></textarea>
+                </div>
+                <div className="form-actions">
+                  <button type="button" className="btn btn-secondary">
+                    <i className="fas fa-times"></i> Cancel
+                  </button>
+                  <button type="submit" className="btn btn-primary">
+                    <i className="fas fa-save"></i> Register Patient
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          {/* Patient List Tab */}
+          <div id="patient-list" className="tab-content">
+            <div className="data-container">
+              <div className="data-header">
+                <h2 className="data-title">
+                  <i className="fas fa-users"></i>
+                  Patient Records
+                </h2>
+                <div className="filter-container">
+                  <select className="filter-select" id="patient-filter">
+                    <option value="all">All Patients</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="general">General</option>
+                    <option value="cardiology">Cardiology</option>
+                    <option value="neurology">Neurology</option>
+                    <option value="orthopedics">Orthopedics</option>
+                    <option value="pediatrics">Pediatrics</option>
+                  </select>
+                  <input
+                    type="text"
+                    className="search-filter"
+                    id="patient-search"
+                    placeholder="Search by name, email, or phone..."
+                  />
+                </div>
+              </div>
+              <div className="table-container">
+                <table className="data-table" id="patient-table">
+                  <thead>
+                    <tr>
+                      <th>Patient ID</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                      <th>Gender</th>
+                      <th>Treatment Type</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="patient-table-body">
+                    {/* Sample data will be populated by JavaScript */}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Doctor Section */}
+        <div id="doctor-section" className="section">
+          <div className="page-header">
+            <nav className="breadcrumb">
+              <span className="breadcrumb-item">Dashboard</span>
+              <i className="breadcrumb-separator fas fa-chevron-right"></i>
+              <span className="breadcrumb-item active">Doctor Management</span>
+            </nav>
+            <h1 className="page-title">Doctor Management</h1>
+            <p className="page-subtitle">
+              Manage doctor registrations and view doctor information.
+            </p>
+          </div>
+
+          {/* Tab Navigation */}
+          <div className="tab-navigation">
+            <button className="tab-btn active" data-tab="doctor-register">
+              <i className="fas fa-user-md"></i> Register Doctor
+            </button>
+            <button className="tab-btn" data-tab="doctor-list">
+              <i className="fas fa-list"></i> Doctor List
+            </button>
+          </div>
+
+          {/* Doctor Registration Tab */}
+          <div id="doctor-register" className="tab-content active">
+            <div className="form-container">
+              <h2 className="form-title">
+                <i className="fas fa-user-md"></i>
+                Register New Doctor
+              </h2>
+              <form id="doctor-form">
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label className="form-label">Full Name *</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      name="fullName"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Email Address *</label>
+                    <input
+                      type="email"
+                      className="form-input"
+                      name="email"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Phone Number *</label>
+                    <input
+                      type="tel"
+                      className="form-input"
+                      name="phone"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">License Number *</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      name="licenseNumber"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Specialization *</label>
+                    <select
+                      className="form-select"
+                      name="specialization"
+                      required
+                    >
+                      <option value="">Select Specialization</option>
+                      <option value="general">General Medicine</option>
+                      <option value="cardiology">Cardiology</option>
+                      <option value="neurology">Neurology</option>
+                      <option value="orthopedics">Orthopedics</option>
+                      <option value="pediatrics">Pediatrics</option>
+                      <option value="dermatology">Dermatology</option>
+                      <option value="psychiatry">Psychiatry</option>
+                      <option value="surgery">Surgery</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Years of Experience *</label>
+                    <input
+                      type="number"
+                      className="form-input"
+                      name="experience"
+                      min="0"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Gender *</label>
+                    <select className="form-select" name="gender" required>
+                      <option value="">Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Department</label>
+                    <select className="form-select" name="department">
+                      <option value="">Select Department</option>
+                      <option value="emergency">Emergency</option>
+                      <option value="icu">ICU</option>
+                      <option value="outpatient">Outpatient</option>
+                      <option value="surgery">Surgery</option>
+                      <option value="pediatrics">Pediatrics</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Qualifications</label>
+                  <textarea
+                    className="form-textarea"
+                    name="qualifications"
+                    placeholder="Enter medical qualifications and certifications"
+                  ></textarea>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Address</label>
+                  <textarea
+                    className="form-textarea"
+                    name="address"
+                    placeholder="Enter full address"
+                  ></textarea>
+                </div>
+                <div className="form-actions">
+                  <button type="button" className="btn btn-secondary">
+                    <i className="fas fa-times"></i> Cancel
+                  </button>
+                  <button type="submit" className="btn btn-primary">
+                    <i className="fas fa-save"></i> Register Doctor
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          {/* Doctor List Tab */}
+          <div id="doctor-list" className="tab-content">
+            <div className="data-container">
+              <div className="data-header">
+                <h2 className="data-title">
+                  <i className="fas fa-user-md"></i>
+                  Doctor Records
+                </h2>
+                <div className="filter-container">
+                  <select className="filter-select" id="doctor-filter">
+                    <option value="all">All Doctors</option>
+                    <option value="general">General Medicine</option>
+                    <option value="cardiology">Cardiology</option>
+                    <option value="neurology">Neurology</option>
+                    <option value="orthopedics">Orthopedics</option>
+                    <option value="pediatrics">Pediatrics</option>
+                    <option value="dermatology">Dermatology</option>
+                    <option value="surgery">Surgery</option>
+                  </select>
+                  <input
+                    type="text"
+                    className="search-filter"
+                    id="doctor-search"
+                    placeholder="Search by name, email, or specialization..."
+                  />
+                </div>
+              </div>
+              <div className="table-container">
+                <table className="data-table" id="doctor-table">
+                  <thead>
+                    <tr>
+                      <th>Doctor ID</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Phone</th>
+                      <th>Specialization</th>
+                      <th>Experience</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="doctor-table-body">
+                    {/* Sample data will be populated by JavaScript */}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+export default AdminDashboard;
+
