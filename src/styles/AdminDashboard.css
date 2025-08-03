@@ -245,6 +245,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+        }
+
+        .theme-toggle i {
+            transition: all 0.3s ease;
+            transform-origin: center;
         }
 
         .theme-toggle:hover {
@@ -528,7 +534,15 @@
             .header-right {
                 order: 2;
                 width: 100%;
-                justify-content: space-between;
+                justify-content: flex-end;
+                gap: 0.75rem;
+            }
+
+            .theme-toggle,
+            .notification-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
             }
 
             .search-container {
@@ -554,6 +568,32 @@
         }
 
         @media (max-width: 480px) {
+            .header {
+                padding: 0.75rem;
+            }
+
+            .header-right {
+                gap: 0.5rem;
+            }
+
+            .theme-toggle,
+            .notification-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 0.9rem;
+                padding: 0.4rem;
+            }
+
+            .user-profile {
+                gap: 0.5rem;
+            }
+
+            .user-avatar {
+                width: 32px;
+                height: 32px;
+                font-size: 0.9rem;
+            }
+
             .stat-card {
                 padding: 1rem;
             }
