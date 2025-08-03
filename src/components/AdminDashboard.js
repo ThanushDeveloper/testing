@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import "../styles/AdminDashboard.css";
 
 // const AdminDashboard = () => {
-function AdminDashboard() {
+function AdminDashboard({ auth, setAuth }) {
   useEffect(() => {
     // Theme Toggle Functionality
     const themeToggle = document.getElementById("themeToggle");
@@ -175,8 +175,9 @@ function AdminDashboard() {
           const formData = new FormData(patientForm);
           const patientData = Object.fromEntries(formData);
 
-          // Generate ID
+          // Generate ID and map form fields
           patientData.id = "P" + String(patients.length + 1).padStart(3, "0");
+          patientData.name = patientData.fullName;
           patientData.status = "active";
 
           // Add to patients array
@@ -205,8 +206,9 @@ function AdminDashboard() {
           const formData = new FormData(doctorForm);
           const doctorData = Object.fromEntries(formData);
 
-          // Generate ID
+          // Generate ID and map form fields
           doctorData.id = "D" + String(doctors.length + 1).padStart(3, "0");
+          doctorData.name = doctorData.fullName;
           doctorData.status = "active";
 
           // Add to doctors array
@@ -420,39 +422,39 @@ function AdminDashboard() {
     }
 
     // CRUD Operations
-    // function editPatient(id) {
-    //   const patient = patients.find((p) => p.id === id);
-    //   if (patient) {
-    //     alert(
-    //       `Edit patient: ${patient.name}\n(This would open an edit form in a real application)`
-    //     );
-    //   }
-    // }
+    window.editPatient = function editPatient(id) {
+      const patient = patients.find((p) => p.id === id);
+      if (patient) {
+        alert(
+          `Edit patient: ${patient.name}\n(This would open an edit form in a real application)`
+        );
+      }
+    };
 
-    // function deletePatient(id) {
-    //   if (window.confirm("Are you sure you want to delete this patient?")) {
-    //     patients = patients.filter((p) => p.id !== id);
-    //     renderPatientTable();
-    //     alert("Patient deleted successfully!");
-    //   }
-    // }
+    window.deletePatient = function deletePatient(id) {
+      if (window.confirm("Are you sure you want to delete this patient?")) {
+        patients = patients.filter((p) => p.id !== id);
+        renderPatientTable();
+        alert("Patient deleted successfully!");
+      }
+    };
 
-    // function editDoctor(id) {
-    //   const doctor = doctors.find((d) => d.id === id);
-    //   if (doctor) {
-    //     alert(
-    //       `Edit doctor: ${doctor.name}\n(This would open an edit form in a real application)`
-    //     );
-    //   }
-    // }
+    window.editDoctor = function editDoctor(id) {
+      const doctor = doctors.find((d) => d.id === id);
+      if (doctor) {
+        alert(
+          `Edit doctor: ${doctor.name}\n(This would open an edit form in a real application)`
+        );
+      }
+    };
 
-    // function deleteDoctor(id) {
-    //   if (window.confirm("Are you sure you want to delete this doctor?")) {
-    //     doctors = doctors.filter((d) => d.id !== id);
-    //     renderDoctorTable();
-    //     alert("Doctor deleted successfully!");
-    //   }
-    // }
+    window.deleteDoctor = function deleteDoctor(id) {
+      if (window.confirm("Are you sure you want to delete this doctor?")) {
+        doctors = doctors.filter((d) => d.id !== id);
+        renderDoctorTable();
+        alert("Doctor deleted successfully!");
+      }
+    };
 
     // Initialize everything when DOM is loaded
     document.addEventListener("DOMContentLoaded", () => {
@@ -461,14 +463,6 @@ function AdminDashboard() {
       initFiltering();
 
       // Initial render of tables
-      renderPatientTable();
-      renderDoctorTable();
-    });
-
-    document.addEventListener("DOMContentLoaded", () => {
-      initTabNavigation();
-      initFormHandling();
-      initFiltering();
       renderPatientTable();
       renderDoctorTable();
     });
