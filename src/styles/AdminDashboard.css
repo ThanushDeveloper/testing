@@ -229,6 +229,7 @@
             display: flex;
             align-items: center;
             gap: 1rem;
+            margin-left: auto;
         }
 
         .theme-toggle {
@@ -534,9 +535,10 @@
 
             .header-right {
                 order: 2;
-                width: 100%;
+                width: auto;
                 justify-content: flex-end;
                 gap: 0.75rem;
+                margin-left: auto;
             }
 
             .theme-toggle,
