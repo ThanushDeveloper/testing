@@ -358,8 +358,8 @@ const handleSpecificSearch = async (type, value) => {
                   </td>
                 </tr>
               ) : (
-                filteredPatients.map((patient) => (
-                  <tr key={patient.id}>
+                filteredPatients.map((patient, index) => (
+                  <tr key={patient.id || `patient-${index}`}>
                     <td>
                       <div className="patient-image">
                         {patient.patientImage ? (
