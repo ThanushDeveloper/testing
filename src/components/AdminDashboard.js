@@ -233,6 +233,34 @@ const handleSignout = () => {
       },
     ];
 
+    // Function to check backend connectivity
+    async function checkBackendConnectivity() {
+      try {
+        const token = localStorage.getItem("authToken");
+        if (!token) return false;
+
+        await axios.get("http://localhost:8080/api/patients/patient-count", {
+          headers: { "Authorization": `Bearer ${token}` },
+          timeout: 5000
+        });
+
+        // Hide error message if connection is successful
+        const statusElement = document.getElementById("backend-status");
+        if (statusElement) {
+          statusElement.style.display = 'none';
+        }
+        return true;
+      } catch (error) {
+        // Show error message if connection fails
+        const statusElement = document.getElementById("backend-status");
+        if (statusElement) {
+          statusElement.style.display = 'block';
+        }
+        return false;
+      }
+    }
+
+
     function initFormHandling() {
       const patientForm = document.getElementById("patient-form");
       if (patientForm) {
@@ -240,7 +268,7 @@ const handleSignout = () => {
           e.preventDefault();
           const formData = new FormData(patientForm);
 // Basic client-side validation
-const requiredFields = ['fullName', 'email', 'phone', 'dob', 'gender', 'password'];
+const requiredFields = ['fullName', 'email', 'phone', 'address', 'dob', 'gender', 'password'];
 const missingFields = [];
 
 for (const field of requiredFields) {
@@ -262,18 +290,37 @@ if (!emailRegex.test(email)) {
   alert('Please enter a valid email address.');
   return;
 }
+// Validate date format
+const dob = formData.get('dob');
+if (!dob) {
+  alert('Please select a date of birth.');
+  return;
+}
 
-          // Prepare patient data in the exact format from your Postman request
+// Validate gender selection
+const gender = formData.get('gender');
+if (!gender || !['male', 'female', 'other'].includes(gender.toLowerCase())) {
+  alert('Please select a valid gender.');
+  return;
+}
+
+// Validate phone number format (basic validation)
+const phone = formData.get('phone');
+if (phone && phone.length < 10) {
+  alert('Please enter a valid phone number with at least 10 digits.');
+  return;
+}
+
+          // Prepare patient data in the exact format expected by backend
           const patientFormData = new FormData();
           patientFormData.append("name", formData.get("fullName"));
           patientFormData.append("email", formData.get("email"));
           patientFormData.append("phone", formData.get("phone"));
           patientFormData.append("address", formData.get("address"));
           patientFormData.append("dob", formData.get("dob"));
-          patientFormData.append("gender", formData.get("gender").toUpperCase());
 
-          // Fix null reference error for gender field
-          const gender = formData.get("gender");
+          // Handle gender field properly
+          // const gender = formData.get("gender");
           if (gender) {
             patientFormData.append("gender", gender.toUpperCase());
           } else {
@@ -286,38 +333,42 @@ if (!emailRegex.test(email)) {
           patientFormData.append("status", "ACTIVE");
           patientFormData.append("treatment", formData.get("treatmentType") || "Physiotherapy");
          
-          // Add missing form fields
-          const bloodGroup = formData.get("bloodGroup");
-          if (bloodGroup) {
-            patientFormData.append("bloodGroup", bloodGroup);
-          }
-
-          const emergencyContact = formData.get("emergencyContact");
-          if (emergencyContact) {
-            patientFormData.append("emergencyContact", emergencyContact);
-          }
-
-          const medicalHistory = formData.get("medicalHistory");
-          if (medicalHistory) {
-            patientFormData.append("medicalHistory", medicalHistory);
-          }
-
-          // Handle image file if provided
+          
+          // Handle image file - backend expects this field
           const imageFile = formData.get("image");
           if (imageFile && imageFile.size > 0) {
             patientFormData.append("image", imageFile);
+          } else {
+            // Create a minimal empty file to satisfy backend multipart requirements
+            const emptyBlob = new Blob([''], { type: 'application/octet-stream' });
+            const dummyFile = new File([emptyBlob], 'empty.dat', { type: 'application/octet-stream' });
+            patientFormData.append("image", dummyFile);
           }
 
           try {
             const token = localStorage.getItem("authToken");
-
             // Check if user is authenticated
             if (!token) {
               alert("You must be logged in to register a patient.");
               return;
             }
 
+            // Additional token validation
+            console.log("Using auth token:", token.substring(0, 20) + "...");
+
+            // Test backend connectivity first
+            const isConnected = await checkBackendConnectivity();
+            if (!isConnected) {
+              alert("Cannot connect to backend server. Please ensure the Spring Boot backend is running on port 8080.");
+              return;
+            }
+
             console.log("Submitting patient data:", Object.fromEntries(patientFormData));
+            console.log("Form data entries:");
+            for (let [key, value] of patientFormData.entries()) {
+              console.log(`${key}:`, value);
+            }
+
 
             const response = await axios.post(
               "http://localhost:8080/api/patients/add",
@@ -348,25 +399,36 @@ if (!emailRegex.test(email)) {
             }
           } catch (error) {
             console.error("Error registering patient:", error);
+            console.error("Error details:", {
+              response: error.response?.data,
+              status: error.response?.status,
+              message: error.message
+            });
+
 
             // Provide more specific error messages
             if (error.response) {
               // Server responded with error status
               const status = error.response.status;
-              const message = error.response.data?.message || error.response.statusText;
+              const message = error.response.data?.message || error.response.data || error.response.statusText;
+
             
               if (status === 401) {
                 alert("Authentication failed. Please log in again.");
               } else if (status === 400) {
                 alert(`Invalid data: ${message}`);
               } else if (status === 409) {
-                alert("A patient with this email already exists.");
+                alert("A patient with this email or phone already exists.");
+              } else if (status === 500) {
+                alert(`Server error: ${message}. Please check the server logs for more details.`);
               } else {
                 alert(`Server error (${status}): ${message}`);
               }
             } else if (error.request) {
-              // Network error
-              alert("Network error. Please check your connection and try again.");
+              // Network error - likely backend not running
+              console.error("Network error - backend may not be running:", error.request);
+              alert("Cannot connect to server. Please ensure the backend server is running on http://localhost:8080 and try again.");
+
             } else {
               // Other error
               alert("An unexpected error occurred. Please try again.");
@@ -1077,6 +1139,31 @@ if (!emailRegex.test(email)) {
               Welcome back! Here's what's happening in your medical facility
               today.
             </p>
+            <div id="backend-status" className="backend-status" style={{
+              padding: '10px 15px',
+              borderRadius: '6px',
+              fontSize: '14px',
+              marginTop: '15px',
+              display: 'none',
+              backgroundColor: '#fee2e2',
+              color: '#dc2626',
+              border: '1px solid #fecaca'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                <i className="fas fa-exclamation-triangle" style={{ marginRight: '8px' }}></i>
+                <strong>Backend Server Not Connected</strong>
+              </div>
+              <div style={{ fontSize: '13px', lineHeight: '1.5' }}>
+                The Spring Boot backend server is not running. Please:
+                <br />
+                1. Navigate to your backend project directory
+                <br />
+                2. Run: <code style={{ backgroundColor: '#f3f4f6', padding: '2px 4px', borderRadius: '3px' }}>mvn spring-boot:run</code> or <code style={{ backgroundColor: '#f3f4f6', padding: '2px 4px', borderRadius: '3px' }}>./gradlew bootRun</code>
+                <br />
+                3. Ensure the server starts on port 8080
+              </div>
+            </div>
+
           </div>
 
           {/* Stats Cards */}
@@ -1299,11 +1386,14 @@ if (!emailRegex.test(email)) {
 
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Address</label>
+                  <label className="form-label">Address *</label>
+
                   <textarea
                     className="form-textarea"
                     name="address"
                     placeholder="Enter full address"
+                    required
+
                   ></textarea>
                 </div>
                 <div className="form-group">
