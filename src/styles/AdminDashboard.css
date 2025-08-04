@@ -998,3 +998,112 @@
                 padding: 0.75rem 0.5rem;
             }
         }
+
+        /* Admin-specific styles */
+        .admin-type-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .admin-type-super {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+
+        .admin-type-staff {
+            background-color: #dbeafe;
+            color: #2563eb;
+        }
+
+        .admin-type-support {
+            background-color: #ecfdf5;
+            color: #059669;
+        }
+
+        [data-theme="dark"] .admin-type-super {
+            background-color: #7f1d1d;
+            color: #fca5a5;
+        }
+
+        [data-theme="dark"] .admin-type-staff {
+            background-color: #1e3a8a;
+            color: #93c5fd;
+        }
+
+        [data-theme="dark"] .admin-type-support {
+            background-color: #064e3b;
+            color: #6ee7b7;
+        }
+
+        .status-suspended {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+
+        [data-theme="dark"] .status-suspended {
+            background-color: #78350f;
+            color: #fcd34d;
+        }
+
+        .status-select {
+            padding: 0.25rem 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.25rem;
+            background-color: var(--surface-color);
+            color: var(--text-primary);
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+        }
+
+        .status-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-help {
+            display: block;
+            margin-top: 0.25rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .success-message {
+            background-color: #d1fae5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .error-message {
+            background-color: #fee2e2;
+            border: 1px solid #fca5a5;
+            color: #991b1b;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        [data-theme="dark"] .success-message {
+            background-color: #064e3b;
+            border-color: #059669;
+            color: #6ee7b7;
+        }
+
+        [data-theme="dark"] .error-message {
+            background-color: #7f1d1d;
+            border-color: #dc2626;
+            color: #fca5a5;
+        }
