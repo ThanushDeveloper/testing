@@ -18,7 +18,7 @@ const [showUserDropdown, setShowUserDropdown] = useState(false);
 useEffect(() => {
   const fetchStats = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("authToken");
 
       const [patientsRes, doctorsRes, adminsRes, prescriptionsRes] = await Promise.all([
         axios.get("http://localhost:8080/api/patients/patient-count", {
@@ -48,10 +48,10 @@ useEffect(() => {
 }, []);
 
 const handleSignout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("userSession");
   setAuth({ isAuthenticated: false, user: null });
-  window.location.href = "/login";
+  window.location.href = "/";
 };
 
 
