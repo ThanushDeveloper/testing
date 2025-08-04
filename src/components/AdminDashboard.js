@@ -1,11 +1,54 @@
 import React, { useEffect, useState } from "react";
 import "../styles/AdminDashboard.css";
+import axios from "axios";
 
 // const AdminDashboard = () => {
 function AdminDashboard({ auth, setAuth }) {
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem("theme") || "dark";
   });
+
+  const [patientCount, setPatientCount] = useState(0);
+const [doctorCount, setDoctorCount] = useState(0);
+const [adminCount, setAdminCount] = useState(0);
+const [prescriptionCount, setPrescriptionCount] = useState(0);
+
+useEffect(() => {
+  const fetchStats = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const [patientsRes, doctorsRes, adminsRes, prescriptionsRes] = await Promise.all([
+        axios.get("http://localhost:8080/api/patients/patient-count", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get("http://localhost:8080/admin/doctor-count", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get("http://localhost:8080/admin/count", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get("http://localhost:8080/prescription/count", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
+
+      setPatientCount(patientsRes.data);
+      setDoctorCount(doctorsRes.data);
+      setAdminCount(adminsRes.data);
+      setPrescriptionCount(prescriptionsRes.data);
+    } catch (error) {
+      console.error("Error fetching dashboard stats:", error);
+    }
+  };
+
+  fetchStats();
+}, []);
+
+
+// 
+// 
+// 
 
   useEffect(() => {
     // Apply theme to body
@@ -802,7 +845,7 @@ function AdminDashboard({ auth, setAuth }) {
               <div className="stat-header">
                 <div>
                   <div className="stat-title">Total Patients</div>
-                  <div className="stat-value">1,243</div>
+                  <div className="stat-value">{patientCount}</div>
                 </div>
                 <div className="stat-icon patients">
                   <i className="fas fa-user-injured"></i>
@@ -822,7 +865,7 @@ function AdminDashboard({ auth, setAuth }) {
               <div className="stat-header">
                 <div>
                   <div className="stat-title">Total Doctors</div>
-                  <div className="stat-value">89</div>
+                  <div className="stat-value">{doctorCount}</div>
                 </div>
                 <div className="stat-icon doctors">
                   <i className="fas fa-user-md"></i>
@@ -842,7 +885,7 @@ function AdminDashboard({ auth, setAuth }) {
               <div className="stat-header">
                 <div>
                   <div className="stat-title">Total Admins</div>
-                  <div className="stat-value">12</div>
+                  <div className="stat-value">{adminCount}</div>
                 </div>
                 <div className="stat-icon admins">
                   <i className="fas fa-user-shield"></i>
@@ -862,7 +905,7 @@ function AdminDashboard({ auth, setAuth }) {
               <div className="stat-header">
                 <div>
                   <div className="stat-title">Total Prescriptions</div>
-                  <div className="stat-value">2,847</div>
+                  <div className="stat-value">{prescriptionCount}</div>
                 </div>
                 <div className="stat-icon prescriptions">
                   <i className="fas fa-prescription-bottle-alt"></i>
