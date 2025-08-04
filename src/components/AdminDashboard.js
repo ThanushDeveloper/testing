@@ -236,30 +236,56 @@ const handleSignout = () => {
     function initFormHandling() {
       const patientForm = document.getElementById("patient-form");
       if (patientForm) {
-        patientForm.addEventListener("submit", (e) => {
+        patientForm.addEventListener("submit", async (e) => {
           e.preventDefault();
           const formData = new FormData(patientForm);
-          const patientData = Object.fromEntries(formData);
 
-          // Generate ID
-          patientData.id = "P" + String(patients.length + 1).padStart(3, "0");
-          patientData.name = patientData.fullName;
-          patientData.status = "active";
+          // Prepare patient data in the exact format from your Postman request
+          const patientFormData = new FormData();
+          patientFormData.append("name", formData.get("fullName"));
+          patientFormData.append("email", formData.get("email"));
+          patientFormData.append("phone", formData.get("phone"));
+          patientFormData.append("address", formData.get("address"));
+          patientFormData.append("dob", formData.get("dob"));
+          patientFormData.append("gender", formData.get("gender").toUpperCase());
+          patientFormData.append("password", formData.get("password"));
+          patientFormData.append("status", "ACTIVE");
+          patientFormData.append("treatment", formData.get("treatmentType") || "Physiotherapy");
+          
+          // Handle image file if provided
+          const imageFile = formData.get("image");
+          if (imageFile && imageFile.size > 0) {
+            patientFormData.append("image", imageFile);
+          }
 
-          // Add to patients array
-          patients.push(patientData);
+          try {
+            const token = localStorage.getItem("authToken");
+            const response = await axios.post(
+              "http://localhost:8080/api/patients/add",
+              patientFormData,
+              {
+                headers: {
+                  "Authorization": `Bearer ${token}`,
+                  "Content-Type": "multipart/form-data"
+                }
+              }
+            );
 
-          // Reset form
-          patientForm.reset();
+            // Reset form
+            patientForm.reset();
 
-          // Show success message
-          alert("Patient registered successfully!");
+            // Show success message
+            alert("Patient registered successfully!");
 
-          // Refresh patient table if visible
-          if (
-            document.getElementById("patient-list").classList.contains("active")
-          ) {
-            renderPatientTable();
+            // Refresh patient table if visible
+            if (
+              document.getElementById("patient-list").classList.contains("active")
+            ) {
+              renderPatientTable();
+            }
+          } catch (error) {
+            console.error("Error registering patient:", error);
+            alert("Failed to register patient. Please try again.");
           }
         });
       }
@@ -1121,6 +1147,16 @@ const handleSignout = () => {
                     </select>
                   </div>
                   <div className="form-group">
+                    <label className="form-label">Password *</label>
+                    <input
+                      type="password"
+                      className="form-input"
+                      name="password"
+                      required
+                      placeholder="Enter password"
+                    />
+                  </div>
+                  <div className="form-group">
                     <label className="form-label">Blood Group</label>
                     <select className="form-select" name="bloodGroup">
                       <option value="">Select Blood Group</option>
@@ -1146,14 +1182,23 @@ const handleSignout = () => {
                     <label className="form-label">Treatment Type</label>
                     <select className="form-select" name="treatmentType">
                       <option value="">Select Treatment Type</option>
-                      <option value="general">General Consultation</option>
-                      <option value="cardiology">Cardiology</option>
-                      <option value="neurology">Neurology</option>
-                      <option value="orthopedics">Orthopedics</option>
-                      <option value="pediatrics">Pediatrics</option>
-                      <option value="dermatology">Dermatology</option>
-                      <option value="emergency">Emergency</option>
+                      <option value="Physiotherapy">Physiotherapy</option>
+                      <option value="Cardiology">Cardiology</option>
+                      <option value="Neurology">Neurology</option>
+                      <option value="Orthopedics">Orthopedics</option>
+                      <option value="Pediatrics">Pediatrics</option>
+                      <option value="Dermatology">Dermatology</option>
+                      <option value="Emergency">Emergency</option>
                     </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Profile Image</label>
+                    <input
+                      type="file"
+                      className="form-input"
+                      name="image"
+                      accept="image/*"
+                    />
                   </div>
                 </div>
                 <div className="form-group">
