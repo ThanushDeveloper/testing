@@ -46,11 +46,38 @@ useEffect(() => {
   fetchStats();
 }, []);
 
-const handleSignout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  setAuth({ isAuthenticated: false, user: null });
-  window.location.href = "/login";
+const handleSignout = async () => {
+  try {
+    // Clear ALL authentication data (both current and App.js keys)
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userSession");
+    localStorage.removeItem("isAuthenticated");
+    localStorage.clear(); // Clear all localStorage data
+    
+    // Clear session storage as well
+    sessionStorage.clear();
+    
+    // Update auth state immediately
+    if (setAuth) {
+      setAuth({ 
+        isAuthenticated: false, 
+        role: null, 
+        username: "",
+        user: null 
+      });
+    }
+    
+    // Force complete page reload to break any routing loops
+    window.location.href = "/";
+    window.location.reload();
+    
+  } catch (error) {
+    console.error("Logout error:", error);
+    // Fallback: force redirect even if there's an error
+    window.location.href = "/";
+  }
 };
 
 
