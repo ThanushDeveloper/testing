@@ -263,7 +263,8 @@ const handleSignout = () => {
 
     function initFormHandling() {
       const patientForm = document.getElementById("patient-form");
-      if (patientForm) {
+      if (patientForm && !patientForm.hasAttribute("data-listener-attached")) {
+          patientForm.setAttribute("data-listener-attached", "true");
           patientForm.addEventListener("submit", async (e) => {
           e.preventDefault();
           const formData = new FormData(patientForm);
@@ -440,7 +441,9 @@ if (phone && phone.length < 10) {
 
       // Doctor Form
       const doctorForm = document.getElementById("doctor-form");
-      if (doctorForm) {
+      if (doctorForm && !doctorForm.hasAttribute("data-listener-attached")) {
+        doctorForm.setAttribute("data-listener-attached", "true");
+
         doctorForm.addEventListener("submit", (e) => {
           e.preventDefault();
           const formData = new FormData(doctorForm);
@@ -734,7 +737,11 @@ if (phone && phone.length < 10) {
 
 
     // Initialize everything when DOM is loaded
-      const initializeComponents = () => {
+    let isInitialized = false;
+    const initializeComponents = () => {
+      // Prevent multiple initializations
+      if (isInitialized) return;
+      isInitialized = true;
 
       initTabNavigation();
       initFormHandling();
