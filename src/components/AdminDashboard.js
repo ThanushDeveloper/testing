@@ -239,6 +239,29 @@ const handleSignout = () => {
           patientForm.addEventListener("submit", async (e) => {
           e.preventDefault();
           const formData = new FormData(patientForm);
+// Basic client-side validation
+const requiredFields = ['fullName', 'email', 'phone', 'dob', 'gender', 'password'];
+const missingFields = [];
+
+for (const field of requiredFields) {
+  const value = formData.get(field);
+  if (!value || value.trim() === '') {
+    missingFields.push(field);
+  }
+}
+
+if (missingFields.length > 0) {
+  alert(`Please fill in the following required fields: ${missingFields.join(', ')}`);
+  return;
+}
+
+// Validate email format
+const email = formData.get('email');
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+if (!emailRegex.test(email)) {
+  alert('Please enter a valid email address.');
+  return;
+}
 
           // Prepare patient data in the exact format from your Postman request
           const patientFormData = new FormData();
@@ -248,10 +271,37 @@ const handleSignout = () => {
           patientFormData.append("address", formData.get("address"));
           patientFormData.append("dob", formData.get("dob"));
           patientFormData.append("gender", formData.get("gender").toUpperCase());
+
+          // Fix null reference error for gender field
+          const gender = formData.get("gender");
+          if (gender) {
+            patientFormData.append("gender", gender.toUpperCase());
+          } else {
+            console.error("Gender field is required");
+            alert("Please select a gender before submitting the form.");
+            return;
+          }
+
           patientFormData.append("password", formData.get("password"));
           patientFormData.append("status", "ACTIVE");
           patientFormData.append("treatment", formData.get("treatmentType") || "Physiotherapy");
          
+          // Add missing form fields
+          const bloodGroup = formData.get("bloodGroup");
+          if (bloodGroup) {
+            patientFormData.append("bloodGroup", bloodGroup);
+          }
+
+          const emergencyContact = formData.get("emergencyContact");
+          if (emergencyContact) {
+            patientFormData.append("emergencyContact", emergencyContact);
+          }
+
+          const medicalHistory = formData.get("medicalHistory");
+          if (medicalHistory) {
+            patientFormData.append("medicalHistory", medicalHistory);
+          }
+
           // Handle image file if provided
           const imageFile = formData.get("image");
           if (imageFile && imageFile.size > 0) {
@@ -260,6 +310,15 @@ const handleSignout = () => {
 
           try {
             const token = localStorage.getItem("authToken");
+
+            // Check if user is authenticated
+            if (!token) {
+              alert("You must be logged in to register a patient.");
+              return;
+            }
+
+            console.log("Submitting patient data:", Object.fromEntries(patientFormData));
+
             const response = await axios.post(
               "http://localhost:8080/api/patients/add",
               patientFormData,
@@ -271,12 +330,14 @@ const handleSignout = () => {
               }
             );
 
-          // Reset form
-          patientForm.reset();
+            console.log("Patient registration response:", response.data);
+          
+            // Reset form
+            patientForm.reset();
 
-
-          // Show success message
-          alert("Patient registered successfully!");
+            // Show success message
+            alert("Patient registered successfully!");
+         
 
 
             // Refresh patient table if visible
@@ -287,8 +348,30 @@ const handleSignout = () => {
             }
           } catch (error) {
             console.error("Error registering patient:", error);
-            alert("Failed to register patient. Please try again.");
-         
+
+            // Provide more specific error messages
+            if (error.response) {
+              // Server responded with error status
+              const status = error.response.status;
+              const message = error.response.data?.message || error.response.statusText;
+            
+              if (status === 401) {
+                alert("Authentication failed. Please log in again.");
+              } else if (status === 400) {
+                alert(`Invalid data: ${message}`);
+              } else if (status === 409) {
+                alert("A patient with this email already exists.");
+              } else {
+                alert(`Server error (${status}): ${message}`);
+              }
+            } else if (error.request) {
+              // Network error
+              alert("Network error. Please check your connection and try again.");
+            } else {
+              // Other error
+              alert("An unexpected error occurred. Please try again.");
+            }
+
           }
         });
       }
@@ -589,7 +672,8 @@ const handleSignout = () => {
 
 
     // Initialize everything when DOM is loaded
-    document.addEventListener("DOMContentLoaded", () => {
+      const initializeComponents = () => {
+
       initTabNavigation();
       initFormHandling();
       initFiltering();
@@ -597,7 +681,15 @@ const handleSignout = () => {
       // Initial render of tables
       renderPatientTable();
       renderDoctorTable();
-    });
+    };
+  
+    // Use timeout to ensure DOM is fully rendered
+    setTimeout(initializeComponents, 100);
+
+    // Also add event listener as fallback
+    document.addEventListener("DOMContentLoaded", initializeComponents);
+
+
 
     // document.addEventListener("DOMContentLoaded", () => {
     //   initTabNavigation();
