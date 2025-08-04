@@ -48,11 +48,9 @@ useEffect(() => {
 }, []);
 
 const handleSignout = () => {
-  localStorage.removeItem("authToken");
-   localStorage.removeItem("userSession");
-
-  setAuth({ isAuthenticated: false, user: null });
-  window.location.href = "/";
+  localStorage.clear();
+  setAuth({ isAuthenticated: false, role: null, username: "" });
+ 
 
 };
 
@@ -975,11 +973,11 @@ const handleSignout = () => {
                   <i className="fas fa-user-injured"></i>
                 </div>
               </div>
-              <div className="stat-change positive">
+              {/* <div className="stat-change positive">
                 <i className="change-icon fas fa-arrow-up"></i>
                 <span>+5.2%</span>
                 <span className="change-text">from last month</span>
-              </div>
+              </div> */}
             </div>
 
             <div
@@ -995,11 +993,11 @@ const handleSignout = () => {
                   <i className="fas fa-user-md"></i>
                 </div>
               </div>
-              <div className="stat-change positive">
+              {/* <div className="stat-change positive">
                 <i className="change-icon fas fa-arrow-up"></i>
                 <span>+2.1%</span>
                 <span className="change-text">from last week</span>
-              </div>
+              </div> */}
             </div>
 
             <div
@@ -1015,11 +1013,11 @@ const handleSignout = () => {
                   <i className="fas fa-user-shield"></i>
                 </div>
               </div>
-              <div className="stat-change positive">
+              {/* <div className="stat-change positive">
                 <i className="change-icon fas fa-arrow-up"></i>
                 <span>+1</span>
                 <span className="change-text">new this month</span>
-              </div>
+              </div> */}
             </div>
 
             <div
@@ -1035,11 +1033,11 @@ const handleSignout = () => {
                   <i className="fas fa-prescription-bottle-alt"></i>
                 </div>
               </div>
-              <div className="stat-change positive">
+              {/* <div className="stat-change positive">
                 <i className="change-icon fas fa-arrow-up"></i>
                 <span>+8.7%</span>
                 <span className="change-text">from last month</span>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
