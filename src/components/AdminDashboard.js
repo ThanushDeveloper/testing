@@ -12,6 +12,8 @@ function AdminDashboard({ auth, setAuth }) {
 const [doctorCount, setDoctorCount] = useState(0);
 const [adminCount, setAdminCount] = useState(0);
 const [prescriptionCount, setPrescriptionCount] = useState(0);
+const [showUserDropdown, setShowUserDropdown] = useState(false);
+
 
 useEffect(() => {
   const fetchStats = async () => {
@@ -44,6 +46,13 @@ useEffect(() => {
 
   fetchStats();
 }, []);
+
+const handleSignout = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  setAuth({ isAuthenticated: false, user: null });
+  window.location.href = "/login";
+};
 
 
 // 
@@ -615,6 +624,23 @@ useEffect(() => {
       notificationBtn.addEventListener("click", handleNotificationClick);
     }
 
+    const userProfile = document.querySelector(".user-profile");
+    function handleUserProfileClick() {
+      setShowUserDropdown(!showUserDropdown);
+    }
+
+    function handleDocumentClickForDropdown(e) {
+      if (userProfile && !userProfile.contains(e.target)) {
+        setShowUserDropdown(false);
+      }
+    }
+      
+    if (userProfile) {
+      userProfile.addEventListener("click", handleUserProfileClick);
+    }
+
+    document.addEventListener("click", handleDocumentClickForDropdown);
+
 
     const style = document.createElement("style");
     style.textContent = `
@@ -623,6 +649,75 @@ useEffect(() => {
         50% { transform: scale(1.2); }
         100% { transform: scale(1); }
       }
+
+      .user-profile {
+  position: relative;
+  cursor: pointer;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  min-width: 180px;
+  z-index: 1000;
+  margin-top: 8px;
+  animation: fadeInDown 0.2s ease;
+}
+
+.dropdown-item {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background-color 0.25s;
+  color: var(--text-primary);
+}
+
+.dropdown-item:hover {
+  background: var(--hover-bg);
+}
+
+.dropdown-item i {
+  width: 16px;
+  color: var(--text-secondary);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 4px 0;
+}
+
+.signout-item {
+  color: #ef4444;
+}
+
+.signout-item:hover {
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.signout-item i {
+  color: #ef4444;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
     `;
     document.head.appendChild(style);
 
@@ -713,6 +808,15 @@ useEffect(() => {
       if (notificationBtn) {
         notificationBtn.removeEventListener("click", handleNotificationClick);
       }
+
+      // Remove user profile listeners
+      if (userProfile) {
+        userProfile.removeEventListener("click", handleUserProfileClick);
+      }
+
+      document.removeEventListener("click", handleDocumentClickForDropdown);
+
+
 
       // Reset body styles
       document.body.style.opacity = "";
@@ -813,6 +917,24 @@ useEffect(() => {
               className="fas fa-chevron-down"
               style={{ color: "var(--text-secondary)", fontSize: "0.8rem" }}
             ></i>
+            {showUserDropdown && (
+              <div className="user-dropdown">
+                <div className="dropdown-item">
+                  <i className="fas fa-user"></i>
+                  <span>Profile</span>
+                </div>
+                <div className="dropdown-item">
+                  <i className="fas fa-cog"></i>
+                  <span>Settings</span>
+                </div>
+                <div className="dropdown-divider"></div>
+                <div className="dropdown-item signout-item" onClick={handleSignout}>
+                  <i className="fas fa-sign-out-alt"></i>
+                  <span>Sign Out</span>
+                </div>
+              </div>
+            )}
+
           </div>
         </div>
       </header>
