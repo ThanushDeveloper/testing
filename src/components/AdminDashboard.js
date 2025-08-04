@@ -48,10 +48,12 @@ useEffect(() => {
 }, []);
 
 const handleSignout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
+  localStorage.removeItem("authToken");
+   localStorage.removeItem("userSession");
+
   setAuth({ isAuthenticated: false, user: null });
-  window.location.href = "/login";
+  window.location.href = "/";
+
 };
 
 
