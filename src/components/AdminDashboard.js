@@ -19,16 +19,16 @@ useEffect(() => {
       const token = localStorage.getItem("token");
 
       const [patientsRes, doctorsRes, adminsRes, prescriptionsRes] = await Promise.all([
-        axios.get("http://localhost:8080/api/patients/patient-count", {
+        axios.get("http://localhost:8080/api/patients/count", {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get("http://localhost:8080/admin/doctor-count", {
+        axios.get("http://localhost:8080/api/doctors/count", {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get("http://localhost:8080/admin/count", {
+        axios.get("http://localhost:8080/api/admins/count", {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        axios.get("http://localhost:8080/prescription/count", {
+        axios.get("http://localhost:8080/api/prescriptions/count", {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
