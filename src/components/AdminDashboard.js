@@ -71,7 +71,6 @@ const handleSignout = () => {
 
     // Theme Toggle Functionality
     const themeToggle = document.getElementById("themeToggle");
-    const themeIcon = document.getElementById("themeIcon");
 
     
 
@@ -659,7 +658,8 @@ if (phone && phone.length < 10) {
 
     const userProfile = document.querySelector(".user-profile");
     function handleUserProfileClick() {
-      setShowUserDropdown(!showUserDropdown);
+      setShowUserDropdown(prev => !prev);
+
     }
 
     function handleDocumentClickForDropdown(e) {
