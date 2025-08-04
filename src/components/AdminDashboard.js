@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "../styles/AdminDashboard.css";
 import "../styles/PatientList.css";
+import "../styles/DoctorStyles.css";
 import PatientList from "./PatientList";
+import DoctorRegistration from "./DoctorRegistration";
+import DoctorList from "./DoctorList";
 import axios from "axios";
 
 // const AdminDashboard = () => {
@@ -1296,173 +1299,13 @@ if (phone && phone.length < 10) {
 
           {/* Doctor Registration Tab */}
           <div id="doctor-register" className="tab-content active">
-            <div className="form-container">
-              <h2 className="form-title">
-                <i className="fas fa-user-md"></i>
-                Register New Doctor
-              </h2>
-              <form id="doctor-form">
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label className="form-label">Full Name *</label>
-                    <input
-                      type="text"
-                      className="form-input"
-                      name="fullName"
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Email Address *</label>
-                    <input
-                      type="email"
-                      className="form-input"
-                      name="email"
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Phone Number *</label>
-                    <input
-                      type="tel"
-                      className="form-input"
-                      name="phone"
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">License Number *</label>
-                    <input
-                      type="text"
-                      className="form-input"
-                      name="licenseNumber"
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Specialization *</label>
-                    <select
-                      className="form-select"
-                      name="specialization"
-                      required
-                    >
-                      <option value="">Select Specialization</option>
-                      <option value="general">General Medicine</option>
-                      <option value="cardiology">Cardiology</option>
-                      <option value="neurology">Neurology</option>
-                      <option value="orthopedics">Orthopedics</option>
-                      <option value="pediatrics">Pediatrics</option>
-                      <option value="dermatology">Dermatology</option>
-                      <option value="psychiatry">Psychiatry</option>
-                      <option value="surgery">Surgery</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Years of Experience *</label>
-                    <input
-                      type="number"
-                      className="form-input"
-                      name="experience"
-                      min="0"
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Gender *</label>
-                    <select className="form-select" name="gender" required>
-                      <option value="">Select Gender</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Department</label>
-                    <select className="form-select" name="department">
-                      <option value="">Select Department</option>
-                      <option value="emergency">Emergency</option>
-                      <option value="icu">ICU</option>
-                      <option value="outpatient">Outpatient</option>
-                      <option value="surgery">Surgery</option>
-                      <option value="pediatrics">Pediatrics</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Qualifications</label>
-                  <textarea
-                    className="form-textarea"
-                    name="qualifications"
-                    placeholder="Enter medical qualifications and certifications"
-                  ></textarea>
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Address</label>
-                  <textarea
-                    className="form-textarea"
-                    name="address"
-                    placeholder="Enter full address"
-                  ></textarea>
-                </div>
-                <div className="form-actions">
-                  <button type="button" className="btn btn-secondary">
-                    <i className="fas fa-times"></i> Cancel
-                  </button>
-                  <button type="submit" className="btn btn-primary">
-                    <i className="fas fa-save"></i> Register Doctor
-                  </button>
-                </div>
-              </form>
-            </div>
+            <DoctorRegistration />
+            
           </div>
 
           {/* Doctor List Tab */}
           <div id="doctor-list" className="tab-content">
-            <div className="data-container">
-              <div className="data-header">
-                <h2 className="data-title">
-                  <i className="fas fa-user-md"></i>
-                  Doctor Records
-                </h2>
-                <div className="filter-container">
-                  <select className="filter-select" id="doctor-filter">
-                    <option value="all">All Doctors</option>
-                    <option value="general">General Medicine</option>
-                    <option value="cardiology">Cardiology</option>
-                    <option value="neurology">Neurology</option>
-                    <option value="orthopedics">Orthopedics</option>
-                    <option value="pediatrics">Pediatrics</option>
-                    <option value="dermatology">Dermatology</option>
-                    <option value="surgery">Surgery</option>
-                  </select>
-                  <input
-                    type="text"
-                    className="search-filter"
-                    id="doctor-search"
-                    placeholder="Search by name, email, or specialization..."
-                  />
-                </div>
-              </div>
-              <div className="table-container">
-                <table className="data-table" id="doctor-table">
-                  <thead>
-                    <tr>
-                      <th>Doctor ID</th>
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Phone</th>
-                      <th>Specialization</th>
-                      <th>Experience</th>
-                      <th>Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="doctor-table-body">
-                    {/* Sample data will be populated by JavaScript */}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <DoctorList />
           </div>
         </div>
       </main>
