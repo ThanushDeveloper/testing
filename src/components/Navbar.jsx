@@ -5,9 +5,8 @@ export default function Navbar({ auth, setAuth }) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Clear authentication data
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userSession');
+    // Clear all authentication data
+    localStorage.clear();
     
     // Reset auth state
     setAuth({

@@ -48,12 +48,8 @@ useEffect(() => {
 }, []);
 
 const handleSignout = () => {
-  localStorage.removeItem("authToken");
-   localStorage.removeItem("userSession");
-
-  setAuth({ isAuthenticated: false, user: null });
-  window.location.href = "/";
-
+  localStorage.clear();
+  setAuth({ isAuthenticated: false, role: null, username: "" });
 };
 
 
