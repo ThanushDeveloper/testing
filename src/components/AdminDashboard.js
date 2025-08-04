@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../styles/AdminDashboard.css";
+import "../styles/PatientList.css";
+import PatientList from "./PatientList";
 import axios from "axios";
 
 // const AdminDashboard = () => {
@@ -174,35 +176,7 @@ const handleSignout = () => {
       });
     }
 
-    let patients = [
-      {
-        id: "P001",
-        name: "John Smith",
-        email: "john.smith@email.com",
-        phone: "+1-555-0123",
-        gender: "male",
-        treatmentType: "cardiology",
-        status: "active",
-      },
-      {
-        id: "P002",
-        name: "Sarah Johnson",
-        email: "sarah.j@email.com",
-        phone: "+1-555-0124",
-        gender: "female",
-        treatmentType: "general",
-        status: "active",
-      },
-      {
-        id: "P003",
-        name: "Michael Brown",
-        email: "michael.b@email.com",
-        phone: "+1-555-0125",
-        gender: "male",
-        treatmentType: "orthopedics",
-        status: "inactive",
-      },
-    ]; // omitted for brevity
+    // Patient data is now handled by the PatientList React component
     let doctors = [
       {
         id: "D001",
@@ -392,12 +366,7 @@ if (phone && phone.length < 10) {
          
 
 
-            // Refresh patient table if visible
-            if (
-              document.getElementById("patient-list").classList.contains("active")
-            ) {
-              renderPatientTable();
-            }
+            // Patient table refresh is now handled by the PatientList React component
           } catch (error) {
             console.error("Error registering patient:", error);
             console.error("Error details:", {
@@ -472,64 +441,7 @@ if (phone && phone.length < 10) {
         });
       }
     }
-    function renderPatientTable(filteredPatients = patients) {
-      const tbody = document.getElementById("patient-table-body");
-      if (!tbody) return;
-
-      tbody.innerHTML = "";
-
-      if (filteredPatients.length === 0) {
-        tbody.innerHTML = `
-                    <tr>
-                        <td colspan="8" class="empty-state">
-                            <i class="fas fa-user-injured"></i>
-                            <p>No patients found</p>
-                        </td>
-                    </tr>
-                `;
-        return;
-      }
-
-      filteredPatients.forEach((patient) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-                    <td>${patient.id}</td>
-                    <td>${patient.name}</td>
-                    <td>${patient.email}</td>
-                    <td>${patient.phone}</td>
-                    <td>${
-                      patient.gender
-                        ? patient.gender.charAt(0).toUpperCase() +
-                          patient.gender.slice(1)
-                        : "N/A"
-                    }</td>
-                    <td>${
-                      patient.treatmentType
-                        ? patient.treatmentType.charAt(0).toUpperCase() +
-                          patient.treatmentType.slice(1)
-                        : "N/A"
-                    }</td>
-                    <td><span class="status-badge status-${patient.status}">${
-          patient.status.charAt(0).toUpperCase() + patient.status.slice(1)
-        }</span></td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn-small btn-edit" onclick="editPatient('${
-                              patient.id
-                            }')" title="Edit">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn-small btn-delete" onclick="deletePatient('${
-                              patient.id
-                            }')" title="Delete">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-        tbody.appendChild(row);
-      });
-    }
+    
     function renderDoctorTable(filteredDoctors = doctors) {
       const tbody = document.getElementById("doctor-table-body");
       if (!tbody) return;
@@ -584,16 +496,7 @@ if (phone && phone.length < 10) {
       });
     }
     function initFiltering() {
-      const patientFilter = document.getElementById("patient-filter");
-      const patientSearch = document.getElementById("patient-search");
-
-      if (patientFilter) {
-        patientFilter.addEventListener("change", filterPatients);
-      }
-
-      if (patientSearch) {
-        patientSearch.addEventListener("input", filterPatients);
-      }
+     
 
       // Doctor filtering
       const doctorFilter = document.getElementById("doctor-filter");
@@ -607,35 +510,7 @@ if (phone && phone.length < 10) {
         doctorSearch.addEventListener("input", filterDoctors);
       }
     }
-    function filterPatients() {
-      const filterValue = document.getElementById("patient-filter").value;
-      const searchValue = document
-        .getElementById("patient-search")
-        .value.toLowerCase();
-
-      let filtered = patients;
-
-      // Apply filter
-      if (filterValue !== "all") {
-        filtered = filtered.filter(
-          (patient) =>
-            patient.gender === filterValue ||
-            patient.treatmentType === filterValue
-        );
-      }
-
-      // Apply search
-      if (searchValue) {
-        filtered = filtered.filter(
-          (patient) =>
-            patient.name.toLowerCase().includes(searchValue) ||
-            patient.email.toLowerCase().includes(searchValue) ||
-            patient.phone.includes(searchValue)
-        );
-      }
-
-      renderPatientTable(filtered);
-    }
+    
     function filterDoctors() {
       const filterValue = document.getElementById("doctor-filter").value;
       const searchValue = document
@@ -664,41 +539,7 @@ if (phone && phone.length < 10) {
       renderDoctorTable(filtered);
     }
 
-    // CRUD Operations
-    // function editPatient(id) {
-    //   const patient = patients.find((p) => p.id === id);
-    //   if (patient) {
-    //     alert(
-    //       `Edit patient: ${patient.name}\n(This would open an edit form in a real application)`
-    //     );
-    //   }
-    // }
-    window.editPatient = function editPatient(id) {
-      const patient = patients.find((p) => p.id === id);
-      if (patient) {
-        alert(
-          `Edit patient: ${patient.name}\n(This would open an edit form in a real application)`
-        );
-      }
-    };
-
-
-    // function deletePatient(id) {
-    //   if (window.confirm("Are you sure you want to delete this patient?")) {
-    //     patients = patients.filter((p) => p.id !== id);
-    //     renderPatientTable();
-    //     alert("Patient deleted successfully!");
-    //   }
-    // }
-
-    window.deletePatient = function deletePatient(id) {
-      if (window.confirm("Are you sure you want to delete this patient?")) {
-        patients = patients.filter((p) => p.id !== id);
-        renderPatientTable();
-        alert("Patient deleted successfully!");
-      }
-    };
-
+   
 
     // function editDoctor(id) {
     //   const doctor = doctors.find((d) => d.id === id);
@@ -748,7 +589,7 @@ if (phone && phone.length < 10) {
       initFiltering();
 
       // Initial render of tables
-      renderPatientTable();
+
       renderDoctorTable();
     };
   
@@ -764,7 +605,6 @@ if (phone && phone.length < 10) {
     //   initTabNavigation();
     //   initFormHandling();
     //   initFiltering();
-    //   renderPatientTable();
     //   renderDoctorTable();
     // });
 
@@ -1425,51 +1265,8 @@ if (phone && phone.length < 10) {
 
           {/* Patient List Tab */}
           <div id="patient-list" className="tab-content">
-            <div className="data-container">
-              <div className="data-header">
-                <h2 className="data-title">
-                  <i className="fas fa-users"></i>
-                  Patient Records
-                </h2>
-                <div className="filter-container">
-                  <select className="filter-select" id="patient-filter">
-                    <option value="all">All Patients</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="general">General</option>
-                    <option value="cardiology">Cardiology</option>
-                    <option value="neurology">Neurology</option>
-                    <option value="orthopedics">Orthopedics</option>
-                    <option value="pediatrics">Pediatrics</option>
-                  </select>
-                  <input
-                    type="text"
-                    className="search-filter"
-                    id="patient-search"
-                    placeholder="Search by name, email, or phone..."
-                  />
-                </div>
-              </div>
-              <div className="table-container">
-                <table className="data-table" id="patient-table">
-                  <thead>
-                    <tr>
-                      <th>Patient ID</th>
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Phone</th>
-                      <th>Gender</th>
-                      <th>Treatment Type</th>
-                      <th>Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="patient-table-body">
-                    {/* Sample data will be populated by JavaScript */}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <PatientList />
+            
           </div>
         </div>
 
