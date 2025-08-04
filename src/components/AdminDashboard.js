@@ -297,7 +297,6 @@ if (phone && phone.length < 10) {
           patientFormData.append("dob", formData.get("dob"));
 
           // Handle gender field properly
-          // const gender = formData.get("gender");
           if (gender) {
             patientFormData.append("gender", gender.toUpperCase());
           } else {
