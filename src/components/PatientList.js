@@ -6,6 +6,7 @@ const PatientList = () => {
   const [filteredPatients, setFilteredPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [filters, setFilters] = useState({
     filterType: 'all',
     searchTerm: '',
@@ -37,37 +38,38 @@ const PatientList = () => {
       const token = getAuthToken();
       let url = "";
 
-        switch (filterType) {
-    case 'gender':
-        url = `http://localhost:8080/api/patients/by-gender/${value}`;
-        break;
-    case 'name':
-        url = `http://localhost:8080/api/patients/by-name/${value}`;
-        break;
-    case 'phone':
-        url = `http://localhost:8080/api/patients/by-phone/${value}`;
-        break;
-    case 'treatment':
-        url = `http://localhost:8080/api/patients/by-treatment/${value}`;
-        break;
-    case 'today':
-        url = 'http://localhost:8080/api/patients/registered-today';
-        break;
-    case 'yesterday':
-        url = 'http://localhost:8080/api/patients/registered-yesterday';
-        break;
-    case 'thisWeek':
-        url = 'http://localhost:8080/api/patients/registered-this-week';
-        break;
-    case 'thisMonth':
-        url = 'http://localhost:8080/api/patients/registered-this-month';
-        break;
-    case 'date':
-        url = `http://localhost:8080/api/patients/registered-on/${value}`;
-        break;
-    default:
-        return await fetchAllPatients();
-}
+      switch (filterType) {
+        case 'gender':
+          url = `http://localhost:8080/api/patients/by-gender/${value}`;
+          break;
+        case 'name':
+          url = `http://localhost:8080/api/patients/by-name/${value}`;
+          break;
+        case 'phone':
+          url = `http://localhost:8080/api/patients/by-phone/${value}`;
+          break;
+        case 'treatment':
+          url = `http://localhost:8080/api/patients/by-treatment/${value}`;
+          break;
+        case 'today':
+          url = 'http://localhost:8080/api/patients/registered-today';
+          break;
+        case 'yesterday':
+          url = 'http://localhost:8080/api/patients/registered-yesterday';
+          break;
+        case 'thisWeek':
+          url = 'http://localhost:8080/api/patients/registered-this-week';
+          break;
+        case 'thisMonth':
+          url = 'http://localhost:8080/api/patients/registered-this-month';
+          break;
+        case 'date':
+          url = `http://localhost:8080/api/patients/registered-on/${value}`;
+          break;
+        default:
+          return await fetchAllPatients();
+      }
+    
 
       const response = await axios.get(url, {
         headers: { Authorization: `Bearer ${token}` }
@@ -79,47 +81,69 @@ const PatientList = () => {
     }
   };
 
-  // Load patients data
-const loadPatients = async () => {
-  setLoading(true);
-  setError('');
-  try {
-    let data = [];
+  // Load patients data with improved error handling
+  const loadPatients = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      let data = [];
+  
 
-    // Apply backend filters first
-    if (filters.dateFilter !== 'all') {
-      data = await fetchPatientsByFilter('date', filters.dateFilter);
-    } else if (filters.gender && filters.filterType === 'gender') {
-      data = await fetchPatientsByFilter('gender', filters.gender);
-    } else if (filters.treatment && filters.filterType === 'treatment') {
-      data = await fetchPatientsByFilter('treatment', filters.treatment);
-    } else {
-      data = await fetchAllPatients();
-    }
+      // Apply backend filters - fix the logic to prevent errors
+      if (filters.dateFilter && filters.dateFilter !== 'all') {
+        try {
+          data = await fetchPatientsByFilter(filters.dateFilter, null);
+        } catch (error) {
+          console.warn(`Time filter ${filters.dateFilter} failed, falling back to all patients:`, error);
+          data = await fetchAllPatients();
+        }
+      } else if (filters.gender && filters.gender !== 'all' && filters.filterType === 'gender') {
+        try {
+          data = await fetchPatientsByFilter('gender', filters.gender);
+        } catch (error) {
+          console.warn(`Gender filter failed, falling back to all patients:`, error);
+          data = await fetchAllPatients();
+        }
+      } else if (filters.treatment && filters.filterType === 'treatment') {
+        try {
+          data = await fetchPatientsByFilter('treatment', filters.treatment);
+        } catch (error) {
+          console.warn(`Treatment filter failed, falling back to all patients:`, error);
+          data = await fetchAllPatients();
+        }
+      } else {
+        data = await fetchAllPatients();
+      }
+            
 
-    setPatients(data);
-    setFilteredPatients(data);
+      setPatients(data);
       setFilteredPatients(data);
     } catch (error) {
       setError('Failed to load patients. Please try again.');
       console.error('Error loading patients:', error);
+      // Set empty arrays to prevent further errors
+      setPatients([]);
+      setFilteredPatients([]);
+
     } finally {
       setLoading(false);
     }
   };
 
   // Apply client-side filtering for search
-const applyClientFilters = () => {
+  const applyClientFilters = () => {
+
     let filtered = [...patients];
 
     // Apply search filter
     if (filters.searchTerm) {
-        const searchLower = filters.searchTerm.toLowerCase();
-        filtered = filtered.filter(patient =>
-            patient.name.toLowerCase().includes(searchLower) ||
-            patient.email.toLowerCase().includes(searchLower) ||
-            patient.phone.includes(filters.searchTerm)
-        );
+      const searchLower = filters.searchTerm.toLowerCase();
+      filtered = filtered.filter(patient =>
+        patient.name.toLowerCase().includes(searchLower) ||
+        patient.email.toLowerCase().includes(searchLower) ||
+        patient.phone.includes(filters.searchTerm)
+      );
+       
     }
 
     setFilteredPatients(filtered);
