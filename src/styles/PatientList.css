@@ -3,6 +3,65 @@
 .patient-list-container {
   width: 100%;
   padding: 20px;
+  transition: all 0.3s ease;
+}
+
+/* Fullscreen Mode */
+.patient-list-container.fullscreen-mode {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--card-bg);
+  z-index: 9999;
+  padding: 20px;
+  overflow: auto;
+}
+
+.patient-list-container.fullscreen-mode .data-container {
+  height: calc(100vh - 40px);
+  display: flex;
+  flex-direction: column;
+}
+
+.patient-list-container.fullscreen-mode .table-container {
+  flex: 1;
+  max-height: none;
+  overflow-y: auto;
+}
+
+/* Fullscreen Toggle Button */
+.fullscreen-toggle-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.fullscreen-toggle-btn:hover {
+  background: var(--primary-hover);
+  transform: scale(1.05);
+}
+
+.fullscreen-toggle-btn i {
+  transition: transform 0.2s;
+}
+
+.fullscreen-toggle-btn:hover i {
+  transform: scale(1.1);
 }
 
 .loading-container {
@@ -34,7 +93,9 @@
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  position: relative;
 }
+
 .data-header {
   padding: 24px;
   border-bottom: 1px solid var(--border-color);
@@ -238,6 +299,11 @@
   color: #880e4f;
 }
 
+.gender-other {
+  background: #f3e5f5;
+  color: #4a148c;
+}
+
 .treatment-badge {
   background: var(--secondary-bg);
   color: var(--text-primary);
@@ -309,10 +375,22 @@ justify-content: center;
   .specific-search-container .search-filter {
     flex: 1;
   }
+
+  .fullscreen-toggle-btn {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-left: auto;
+    margin-bottom: 10px;
+  }
 }
 
 @media (max-width: 768px) {
   .patient-list-container {
+    padding: 10px;
+  }
+  
+  .patient-list-container.fullscreen-mode {
     padding: 10px;
   }
   
@@ -341,6 +419,12 @@ justify-content: center;
   
   .address-cell {
     max-width: 100px;
+  }
+
+  .fullscreen-toggle-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
   }
 }
 
