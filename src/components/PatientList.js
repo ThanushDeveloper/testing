@@ -15,6 +15,11 @@ const PatientList = () => {
     dateFilter: 'all'
   });
 
+  // Toggle fullscreen mode
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+
   // Get auth token
   const getAuthToken = () => localStorage.getItem('authToken');
 
@@ -232,7 +237,16 @@ const handleSpecificSearch = async (type, value) => {
   }
 
   return (
-    <div className="patient-list-container">
+    <div className={`patient-list-container ${isFullscreen ? 'fullscreen-mode' : ''}`}>
+      {/* Fullscreen Toggle Button */}
+      <button 
+        className="fullscreen-toggle-btn" 
+        onClick={toggleFullscreen}
+        title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+      >
+        <i className={`fas ${isFullscreen ? 'fa-compress' : 'fa-expand'}`}></i>
+      </button>
+
       <div className="data-container">
         <div className="data-header">
           <h2 className="data-title">
