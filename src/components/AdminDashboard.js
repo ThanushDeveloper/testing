@@ -63,6 +63,7 @@ useEffect(() => {
       localStorage.removeItem('authToken');
       localStorage.removeItem('userId');
       localStorage.removeItem('userSession');
+      console.log('AdminDashboard: localStorage items removed');
       onLogout();
       console.log('AdminDashboard: onLogout completed');
    
@@ -701,6 +702,10 @@ if (phone && phone.length < 10) {
     }
 
     function handleDocumentClickForDropdown(e) {
+      // Don't close dropdown if clicking on dropdown items
+      if (e.target.closest('.dropdown-item')) {
+        return;
+      }
       if (userProfile && !userProfile.contains(e.target)) {
         setShowUserDropdown(false);
       }
@@ -1013,6 +1018,7 @@ if (phone && phone.length < 10) {
                   e.preventDefault();
                   e.stopPropagation();
                   console.log('Logout button clicked');
+                  setShowUserDropdown(false);
                   handleLogout();
                 }}>
 
