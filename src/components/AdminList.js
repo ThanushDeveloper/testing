@@ -140,6 +140,9 @@ const AdminList = () => {
   };
   // Format admin type
   const getAdminTypeBadge = (adminType) => {
+    if (!adminType) {
+      return <span className="admin-type-badge admin-type-unknown">Unknown</span>;
+    }
     const typeClass = 
       adminType === 'SUPER_ADMIN' ? 'admin-type-super' :
       adminType === 'STAFF_ADMIN' ? 'admin-type-staff' : 'admin-type-support';
