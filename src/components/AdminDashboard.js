@@ -20,7 +20,7 @@ const [doctorCount, setDoctorCount] = useState(0);
 const [adminCount, setAdminCount] = useState(0);
 const [prescriptionCount, setPrescriptionCount] = useState(0);
 const [showUserDropdown, setShowUserDropdown] = useState(false);
-
+const [showProfileModal, setShowProfileModal] = useState(false);
 
 useEffect(() => {
   const fetchStats = async () => {
@@ -56,8 +56,12 @@ useEffect(() => {
 
 const handleSignout = () => {
   localStorage.clear();
-  setAuth({ isAuthenticated: false, role: null, username: "" });
- 
+  setAuth({ isAuthenticated: false, role: null, username: "", user: null });
+};
+
+const handleProfileClick = () => {
+  setShowProfileModal(true);
+  setShowUserDropdown(false); 
 
 };
 
@@ -950,10 +954,20 @@ if (phone && phone.length < 10) {
           </button>
 
           <div className="user-profile">
-            <div className="user-avatar">M</div>
+            <div className="user-avatar">
+              {auth?.user?.image ? (
+                <img 
+                  src={auth.user.image} 
+                  alt="Profile" 
+                  style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                />
+              ) : (
+                auth?.user?.name?.charAt(0)?.toUpperCase() || 'A'
+              )}
+            </div>
             <div className="user-info">
-              <div className="user-name">Musharof</div>
-              <div className="user-role">Admin</div>
+              <div className="user-name">{auth?.user?.name || auth?.username || 'Admin'}</div>
+              <div className="user-role">{auth?.role || 'Admin'}</div>
             </div>
             <i
               className="fas fa-chevron-down"
@@ -961,7 +975,7 @@ if (phone && phone.length < 10) {
             ></i>
             {showUserDropdown && (
               <div className="user-dropdown">
-                <div className="dropdown-item">
+                <div className="dropdown-item" onClick={handleProfileClick}>
                   <i className="fas fa-user"></i>
                   <span>Profile</span>
                 </div>
@@ -1370,6 +1384,125 @@ if (phone && phone.length < 10) {
           
  
       </main>
+
+
+
+      {/* Profile Modal */}
+      {showProfileModal && (
+        <div className="modal-overlay" onClick={() => setShowProfileModal(false)}>
+          <div className="profile-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>User Profile</h2>
+              <button 
+                className="close-btn" 
+                onClick={() => setShowProfileModal(false)}
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="profile-image-section">
+                <div className="profile-image-container">
+                  {auth?.user?.image ? (
+                    <img 
+                      src={auth.user.image} 
+                      alt="Profile" 
+                      className="profile-image"
+                    />
+                  ) : (
+                    <div className="profile-placeholder">
+                      {auth?.user?.name?.charAt(0)?.toUpperCase() || 'A'}
+                    </div>
+                  )}
+                </div>
+                <h3>{auth?.user?.name || auth?.username || 'User'}</h3>
+                <p className="user-role-badge">{auth?.role || 'Admin'}</p>
+              </div>
+              
+              <div className="profile-details">
+                <div className="detail-row">
+                  <span className="detail-label">
+                    <i className="fas fa-id-card"></i> ID:
+                  </span>
+                  <span className="detail-value">{auth?.user?.id || 'N/A'}</span>
+                </div>
+                
+                <div className="detail-row">
+                  <span className="detail-label">
+                    <i className="fas fa-user"></i> Full Name:
+                  </span>
+                  <span className="detail-value">{auth?.user?.name || 'N/A'}</span>
+                </div>
+                
+                <div className="detail-row">
+                  <span className="detail-label">
+                    <i className="fas fa-envelope"></i> Email:
+                  </span>
+                  <span className="detail-value">{auth?.user?.email || 'N/A'}</span>
+                </div>
+                
+                <div className="detail-row">
+                  <span className="detail-label">
+                    <i className="fas fa-phone"></i> Phone:
+                  </span>
+                  <span className="detail-value">{auth?.user?.phone || 'N/A'}</span>
+                </div>
+                
+                {auth?.user?.address && (
+                  <div className="detail-row">
+                    <span className="detail-label">
+                      <i className="fas fa-map-marker-alt"></i> Address:
+                    </span>
+                    <span className="detail-value">{auth.user.address}</span>
+                  </div>
+                )}
+                
+               {auth?.user?.dob && (
+                  <div className="detail-row">
+                    <span className="detail-label">
+                      <i className="fas fa-calendar"></i> Date of Birth:
+                    </span>
+                    <span className="detail-value">{new Date(auth.user.dob).toLocaleDateString()}</span>
+                  </div>
+                )}
+                
+                {auth?.user?.gender && (
+                  <div className="detail-row">
+                    <span className="detail-label">
+                      <i className="fas fa-venus-mars"></i> Gender:
+                    </span>
+                    <span className="detail-value">{auth.user.gender}</span>
+                  </div>
+                )}
+                
+                {auth?.user?.department && (
+                  <div className="detail-row">
+                    <span className="detail-label">
+                      <i className="fas fa-building"></i> Department:
+                    </span>
+                    <span className="detail-value">{auth.user.department}</span>
+                  </div>
+                )}
+                
+                <div className="detail-row">
+                  <span className="detail-label">
+                    <i className="fas fa-shield-alt"></i> Role:
+                  </span>
+                  <span className="detail-value">{auth?.role || 'Admin'}</span>
+                </div>
+                
+                <div className="detail-row">
+                  <span className="detail-label">
+                    <i className="fas fa-info-circle"></i> Status:
+                  </span>
+                  <span className="detail-value status-active">{auth?.user?.status || 'ACTIVE'}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
