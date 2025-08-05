@@ -151,6 +151,13 @@ const handleSignout = () => {
         case "doctor":
           targetSection = document.getElementById("doctor-section");
           break;
+        case "admin register":
+        case "admin":
+          targetSection = document.getElementById("admin-section");
+          break;
+        case "prescription":
+          targetSection = document.getElementById("prescription-section");
+          break;
         default:
           targetSection = document.getElementById("dashboard-section");
       }
@@ -1343,7 +1350,23 @@ if (phone && phone.length < 10) {
           </div>
         </div>
 
-          {/* Admin List Tab */}
+        {/* Prescription Section */}
+        <div id="prescription-section" className="section">
+          <div className="page-header">
+            <nav className="breadcrumb">
+              <span className="breadcrumb-item">Dashboard</span>
+              <i className="breadcrumb-separator fas fa-chevron-right"></i>
+              <span className="breadcrumb-item active">Prescription Management</span>
+            </nav>
+            <h1 className="page-title">Prescription Management</h1>
+            <p className="page-subtitle">
+              Manage prescriptions and medical records.
+            </p>
+          </div>
+          <div className="content-card">
+            <p>Prescription management functionality will be implemented here.</p>
+          </div>
+        </div>
  
       </main>
     </div>
