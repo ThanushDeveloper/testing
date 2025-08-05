@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
 import Login from "./components/Login";
 import AdminDashboard from "./components/AdminDashboard";
 import DoctorDashboard from "./components/DoctorDashboard";
 import PatientDashboard from "./components/PatientDashboard";
+import Profile from "./components/Profile";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 // Protected Route Component
@@ -58,8 +60,9 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <Routes>
+    <AuthProvider>
+      <Router>
+        <Routes>
         {/* Login Route */}
         <Route 
           path="/" 
@@ -118,10 +121,25 @@ function App() {
           } 
         />
         
+        {/* Profile Route */}
+        <Route 
+          path="/admin/profile" 
+          element={
+            <ProtectedRoute 
+              requiredRole="ADMIN" 
+              userRole={auth.role} 
+              isAuthenticated={auth.isAuthenticated}
+            >
+              <Profile />
+            </ProtectedRoute>
+          } 
+        />
+        
         {/* Catch all route - redirect to login */}
         <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Router>
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import '../styles/Login.css';
 import axios from 'axios';
 function Login({ setAuth }) {
   const navigate = useNavigate();
+  const { login } = useAuth();
   
   // State management
   const [isDark, setIsDark] = useState(false);
@@ -169,19 +171,15 @@ function Login({ setAuth }) {
 
     try {
       setIsLoading(true);
-      const result = await authenticateUser(formData);
+      const result = await login(formData);
 
       if (result.success) {
         showSuccess('Login successful! Redirecting to dashboard...');
         
-        // Store user session
-        localStorage.setItem('authToken', result.user.token);
-        localStorage.setItem('userSession', JSON.stringify(result.user));
-        
         // Show loading overlay
         setShowLoadingOverlay(true);
         
-        // Update auth state and redirect
+        // Update legacy auth state for compatibility
         setTimeout(() => {
           setAuth({
             isAuthenticated: true,
