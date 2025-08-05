@@ -115,15 +115,27 @@ function Login({ setAuth }) {
   // Send POST request
   const response = await axios.post(url, payload);
 
-  // Simulate your current expected return structure
+  // Extract complete user profile data from backend response
+  const userData = response.data;
+  
   return {
     success: true,
     user: {
-      id: Date.now(),
+      id: userData.id || Date.now(),
       username: credentials.username,
       role: credentials.role.toUpperCase(),
-      name: `${credentials.role.charAt(0).toUpperCase() + credentials.role.slice(1)} User`,
-      token: response.data.token
+      name: userData.name || userData.fullName || `${credentials.role.charAt(0).toUpperCase() + credentials.role.slice(1)} User`,
+      email: userData.email || credentials.username.includes('@') ? credentials.username : null,
+      phone: userData.phone || (/^\d+$/.test(credentials.username) ? credentials.username : null),
+      image: userData.image || userData.profileImage || null,
+      address: userData.address || null,
+      dob: userData.dob || userData.dateOfBirth || null,
+      gender: userData.gender || null,
+      specialization: userData.specialization || null, // For doctors
+      experience: userData.experience || null, // For doctors
+      department: userData.department || null, // For admins/doctors
+      status: userData.status || 'ACTIVE',
+      token: userData.token || response.data.token
     }
   };
 };
@@ -186,7 +198,8 @@ function Login({ setAuth }) {
           setAuth({
             isAuthenticated: true,
             role: result.user.role,
-            username: result.user.username
+            username: result.user.username,
+            user: result.user
           });
           
           // Navigate to appropriate dashboard based on role

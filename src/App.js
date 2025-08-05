@@ -34,6 +34,7 @@ function App() {
     isAuthenticated: false,
     role: null,
     username: "",
+    user: null, // Complete user profile data
   });
 
   // Check for existing authentication on app load
@@ -48,6 +49,7 @@ function App() {
           isAuthenticated: true,
           role: user.role,
           username: user.username,
+          user: user,
         });
       } catch (error) {
         // Clear invalid session data
