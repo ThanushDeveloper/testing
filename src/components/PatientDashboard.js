@@ -8,10 +8,25 @@ function PatientDashboard({ auth, setAuth, onLogout }) {
   const [showProfileModal, setShowProfileModal] = useState(false);
 
   const handleLogout = () => {
-    // Use the centralized logout function
-    onLogout();
-    // Navigate to login page
-    navigate('/');
+    console.log('PatientDashboard: handleLogout called');
+    try {
+      // Use the centralized logout function
+      onLogout();
+      console.log('PatientDashboard: onLogout completed');
+  
+      // Use setTimeout to ensure state updates are processed before navigation
+      setTimeout(() => {
+        navigate('/', { replace: true });
+        console.log('PatientDashboard: Navigation to login completed');
+      }, 100);
+      
+    } catch (error) {
+      console.error('PatientDashboard: Error during logout:', error);
+      // Even if there's an error, try to navigate away
+      setTimeout(() => {
+        navigate('/', { replace: true });
+      }, 100);
+    }
   };
 
   const handleProfileClick = () => {

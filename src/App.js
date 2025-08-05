@@ -39,16 +39,24 @@ function App() {
 
   // Centralized logout function
   const handleLogout = () => {
-    // Clear all localStorage data
-    localStorage.clear();
+    console.log('App: handleLogout called');
+    try {
+      // Clear all localStorage data
+      localStorage.clear();
+      console.log('App: localStorage cleared');
+  
+      // Reset auth state
+      setAuth({
+        isAuthenticated: false,
+        role: null,
+        username: "",
+        user: null,
+      });
+      console.log('App: Auth state reset');
+    } catch (error) {
+      console.error('App: Error during logout:', error);
+    }
 
-    // Reset auth state
-    setAuth({
-      isAuthenticated: false,
-      role: null,
-      username: "",
-      user: null,
-    });
   };
 
 
