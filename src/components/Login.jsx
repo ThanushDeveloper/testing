@@ -122,7 +122,7 @@ function Login({ setAuth }) {
   return {
     success: true,
     user: {
-      id: userData.id || Date.now(),
+      id: response.data.id || userData.id || Date.now(),
       username: credentials.username,
       role: credentials.role.toUpperCase(),
       name: userData.name || userData.fullName || `${credentials.role.charAt(0).toUpperCase() + credentials.role.slice(1)} User`,
@@ -134,7 +134,7 @@ function Login({ setAuth }) {
       image: userData.image,
       department: userData.department,
       status: userData.status || 'ACTIVE',
-      token: userData.token || response.data.token
+      token: response.data.token || userData.token
     }
   };
 };
@@ -188,6 +188,8 @@ function Login({ setAuth }) {
         // Store user session
         localStorage.setItem('authToken', result.user.token);
         localStorage.setItem('userSession', JSON.stringify(result.user));
+        // Store the ID separately for easy access
+        localStorage.setItem('userId', result.user.id);
         
         // Show loading overlay
         setShowLoadingOverlay(true);
@@ -233,6 +235,8 @@ function Login({ setAuth }) {
         
         // Store user session
         localStorage.setItem('userSession', JSON.stringify(result.user));
+        // Store the ID separately for easy access
+        localStorage.setItem('userId', result.user.id);
         
         // Show loading overlay
         setShowLoadingOverlay(true);
