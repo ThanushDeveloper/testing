@@ -33,3 +33,12 @@ export default function Sidebar({ setActivePage, activePage }) {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+

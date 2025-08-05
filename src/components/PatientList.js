@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import '../styles/PatientList.css';
+
 
 const PatientList = () => {
   const [patients, setPatients] = useState([]);
@@ -364,93 +366,84 @@ const PatientList = () => {
         </div>
 
         <div className="table-container">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Image</th>
-                <th>Patient ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Gender</th>
-                <th>DOB</th>
-                <th>Address</th>
-                <th>Treatment</th>
-                <th>Status</th>
-                <th>Registered</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredPatients.length === 0 ? (
-                <tr>
-                  <td colSpan="12" className="no-data">
-                    <i className="fas fa-users"></i>
-                    <p>No patients found matching your criteria.</p>
-                  </td>
-                </tr>
-              ) : (
-                filteredPatients.map((patient, index) => (
-                  <tr key={patient.id || `patient-${index}`}>
-                    <td>
-                      <div className="patient-image">
-                        {patient.patientImage ? (
-                          <img 
-                            src={`data:image/jpeg;base64,${patient.patientImage}`}
-                            alt={patient.name}
-                            className="patient-avatar"
-                          />
-                        ) : (
-                          <div className="patient-avatar-placeholder">
-                            <i className="fas fa-user"></i>
-                          </div>
-                        )}
+          {filteredPatients.map((patient, index) => (
+                <div key={patient.id || `patient-${index}`} className="patient-card">
+                  <div className="card-header">
+                    <div className="patient-image">
+                      {patient.patientImage ? (
+                        <img 
+                          src={`data:image/jpeg;base64,${patient.patientImage}`}
+                          alt={patient.name}
+                          className="patient-avatar-large"
+                        />
+                      ) : (
+                        <div className="patient-avatar-placeholder-large">
+                          <i className="fas fa-user"></i>
+                        </div>
+                      )}
+                    </div>
+                    <div className="patient-basic-info">
+                      <h3 className="patient-name">#{patient.id} - {patient.name}</h3>
+                      <div className="status-row">
+                        {getStatusBadge(patient.status)}
+                        <span className={`gender-badge gender-${patient.gender?.toLowerCase()}`}>
+                          {patient.gender}
+                        </span>
                       </div>
-                    </td>
-                    <td>#{patient.id}</td>
-                    <td className="patient-name">{patient.name}</td>
-                    <td>{patient.email}</td>
-                    <td>{patient.phone}</td>
-                    <td>
-                      <span className={`gender-badge gender-${patient.gender?.toLowerCase()}`}>
-                        {patient.gender}
-                      </span>
-                    </td>
-                    <td>{formatDate(patient.dob)}</td>
-                    <td className="address-cell">{patient.address}</td>
-                    <td>
-                      <span className="treatment-badge">
-                        {patient.treatment}
-                      </span>
-                    </td>
-                    <td>{getStatusBadge(patient.status)}</td>
-                    <td>{formatDate(patient.createdAt)}</td>
-                    <td>
-                      <div className="action-buttons">
-                        <button 
-                          className="btn-edit"
-                          onClick={() => alert(`Edit functionality for ${patient.name} will be implemented`)}
-                          title="Edit Patient"
-                        >
-                          <i className="fas fa-edit"></i>
-                        </button>
-                        <button 
-                          className="btn-delete"
-                          onClick={() => handleDeletePatient(patient.id)}
-                          title="Delete Patient"
-                        >
-                          <i className="fas fa-trash"></i>
-                        </button>
+                    </div>
+                    <div className="card-actions">
+                      <button 
+                        className="btn-edit"
+                        onClick={() => alert(`Edit functionality for ${patient.name} will be implemented`)}
+                        title="Edit Patient"
+                      >
+                        <i className="fas fa-edit"></i>
+                      </button>
+                      <button 
+                        className="btn-delete"
+                        onClick={() => handleDeletePatient(patient.id)}
+                        title="Delete Patient"
+                      >
+                        <i className="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="card-body">
+                    <div className="info-grid">
+                      <div className="info-item">
+                        <label><i className="fas fa-envelope"></i> Email</label>
+                        <span>{patient.email}</span>
                       </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                      <div className="info-item">
+                        <label><i className="fas fa-phone"></i> Phone</label>
+                        <span>{patient.phone}</span>
+                      </div>
+                      <div className="info-item">
+                        <label><i className="fas fa-birthday-cake"></i> Date of Birth</label>
+                        <span>{formatDate(patient.dob)}</span>
+                      </div>
+                      <div className="info-item">
+                        <label><i className="fas fa-map-marker-alt"></i> Address</label>
+                        <span className="address-text">{patient.address}</span>
+                      </div>
+                      <div className="info-item">
+                        <label><i className="fas fa-stethoscope"></i> Treatment</label>
+                        <span className="treatment-badge">{patient.treatment}</span>
+                      </div>
+                      <div className="info-item">
+                        <label><i className="fas fa-calendar"></i> Registered</label>
+                        <span>{formatDate(patient.createdAt)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          {/* )} */}
         </div>
       </div>
-    </div>
+    // </div>
   );
 };
 

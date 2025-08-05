@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import '../styles/PatientList.css';
+
 
 const DoctorList = () => {
   const [doctors, setDoctors] = useState([]);
@@ -356,96 +358,83 @@ const DoctorList = () => {
         </div>
 
         <div className="table-container">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Image</th>
-                <th>Doctor ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Gender</th>
-                <th>DOB</th>
-                <th>Specialization</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredDoctors.length === 0 ? (
-                <tr>
-                  <td colSpan="10" className="no-data">
-                    <i className="fas fa-user-md"></i>
-                    <p>No doctors found matching your criteria.</p>
-                  </td>
-                </tr>
-              ) : (
-                filteredDoctors.map((doctor) => (
-                  <tr key={doctor.id}>
-                    <td>
-                      <div className="patient-image">
-                        {doctor.doctor_image ? (
-                          <img 
-                            src={`data:image/jpeg;base64,${doctor.doctor_image}`}
-                            alt={doctor.name}
-                            className="patient-avatar"
-                          />
-                        ) : (
-                          <div className="patient-avatar-placeholder">
-                            <i className="fas fa-user-md"></i>
-                          </div>
-                        )}
+          {filteredDoctors.map((doctor) => (
+                <div key={doctor.id} className="patient-card doctor-card">
+                  <div className="card-header">
+                    <div className="patient-image">
+                      {doctor.doctor_image ? (
+                        <img 
+                          src={`data:image/jpeg;base64,${doctor.doctor_image}`}
+                          alt={doctor.name}
+                          className="patient-avatar-large"
+                        />
+                      ) : (
+                        <div className="patient-avatar-placeholder-large">
+                          <i className="fas fa-user-md"></i>
+                        </div>
+                      )}
+                    </div>
+                    <div className="patient-basic-info">
+                      <h3 className="patient-name">#{doctor.id} - {doctor.name}</h3>
+                      <div className="status-row">
+                        {getStatusBadge(doctor.status)}
+                        <span className={`gender-badge gender-${doctor.gender?.toLowerCase()}`}>
+                          {doctor.gender}
+                        </span>
                       </div>
-                    </td>
-                    <td>#{doctor.id}</td>
-                    <td className="patient-name">{doctor.name}</td>
-                    <td>{doctor.email}</td>
-                    <td>{doctor.phone}</td>
-                    <td>
-                      <span className={`gender-badge gender-${doctor.gender?.toLowerCase()}`}>
-                        {doctor.gender}
-                      </span>
-                    </td>
-                    <td>{formatDate(doctor.dob)}</td>
-                    <td>
-                      <span className="treatment-badge">
-                        {doctor.specialization}
-                      </span>
-                    </td>
-                    <td>{getStatusBadge(doctor.status)}</td>
-                    <td>
-                      <div className="action-buttons">
-                        <button 
-                          className="btn-edit"
-                          onClick={() => alert(`Edit functionality for ${doctor.name} will be implemented`)}
-                          title="Edit Doctor"
-                       >
-                         <i className="fas fa-edit"></i>
-                        </button>
-                        <button 
-                          className={`btn-status ${doctor.status === 'ACTIVE' ? 'btn-deactivate' : 'btn-activate'}`}
-                          onClick={() => handleUpdateStatus(doctor.id, doctor.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE')}
-                          title={doctor.status === 'ACTIVE' ? 'Deactivate Doctor' : 'Activate Doctor'}
-                        >
-                          <i className={`fas ${doctor.status === 'ACTIVE' ? 'fa-user-slash' : 'fa-user-check'}`}></i>
-                        </button>
-                        <button 
-                         className="btn-delete"
-                         onClick={() => handleDeleteDoctor(doctor.id)}
-                         title="Delete Doctor"
-                        >
-                          <i className="fas fa-trash"></i>
-                        </button>
+                    </div>
+                    <div className="card-actions">
+                      <button 
+                        className="btn-edit"
+                        onClick={() => alert(`Edit functionality for ${doctor.name} will be implemented`)}
+                        title="Edit Doctor"
+                      >
+                        <i className="fas fa-edit"></i>
+                      </button>
+                      <button 
+                        className={`btn-status ${doctor.status === 'ACTIVE' ? 'btn-deactivate' : 'btn-activate'}`}
+                        onClick={() => handleUpdateStatus(doctor.id, doctor.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE')}
+                        title={doctor.status === 'ACTIVE' ? 'Deactivate Doctor' : 'Activate Doctor'}
+                      >
+                        <i className={`fas ${doctor.status === 'ACTIVE' ? 'fa-user-slash' : 'fa-user-check'}`}></i>
+                      </button>
+                      <button 
+                        className="btn-delete"
+                        onClick={() => handleDeleteDoctor(doctor.id)}
+                        title="Delete Doctor"
+                      >
+                        <i className="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="card-body">
+                    <div className="info-grid">
+                      <div className="info-item">
+                        <label><i className="fas fa-envelope"></i> Email</label>
+                        <span>{doctor.email}</span>
                       </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                      <div className="info-item">
+                        <label><i className="fas fa-phone"></i> Phone</label>
+                        <span>{doctor.phone}</span>
+                      </div>
+                      <div className="info-item">
+                        <label><i className="fas fa-birthday-cake"></i> Date of Birth</label>
+                        <span>{formatDate(doctor.dob)}</span>
+                      </div>
+                      <div className="info-item specialization-item">
+                        <label><i className="fas fa-stethoscope"></i> Specialization</label>
+                        <span className="treatment-badge specialization-badge">{doctor.specialization}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          {/* )} */}
         </div>
       </div>
-    </div>
+    // </div>
   );
 };
 
