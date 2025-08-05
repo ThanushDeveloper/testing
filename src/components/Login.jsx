@@ -122,7 +122,7 @@ function Login({ setAuth }) {
   return {
     success: true,
     user: {
-      id: userData.id || Date.now(),
+      id: userData.userId || userData.id || Date.now(),
       username: credentials.username,
       role: credentials.role.toUpperCase(),
       name: userData.name || userData.fullName || `${credentials.role.charAt(0).toUpperCase() + credentials.role.slice(1)} User`,
@@ -134,6 +134,7 @@ function Login({ setAuth }) {
       image: userData.image,
       department: userData.department,
       status: userData.status || 'ACTIVE',
+      adminType: userData.adminType,
       token: userData.token || response.data.token
     }
   };

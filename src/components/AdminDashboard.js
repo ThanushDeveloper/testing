@@ -51,14 +51,53 @@ useEffect(() => {
     }
   };
 
+  const fetchCurrentUser = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (token && auth?.role === 'ADMIN') {
+        const response = await axios.get("http://localhost:8080/api/user/current", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        // Update auth state with fresh user data
+        setAuth(prev => ({
+          ...prev,
+          user: {
+            ...prev.user,
+            ...response.data
+          }
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching current user:", error);
+    }
+  };
+
   fetchStats();
+  fetchCurrentUser();
 }, []);
 
-const handleSignout = () => {
-  localStorage.clear();
-  setAuth({ isAuthenticated: false, role: null, username: "", user: null });
-  // Force redirect to login page
-  window.location.href = '/';
+const handleSignout = async () => {
+  try {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      // Call logout endpoint (optional since JWT is stateless)
+      await axios.post("http://localhost:8080/auth/logout", {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    }
+  } catch (error) {
+    console.error("Logout API call failed:", error);
+  } finally {
+    // Clear all localStorage data
+    localStorage.clear();
+    // Clear session storage as well
+    sessionStorage.clear();
+    // Reset auth state
+    setAuth({ isAuthenticated: false, role: null, username: "", user: null });
+    // Force redirect to login page
+    window.location.href = '/';
+  }
 };
 
 const handleProfileClick = () => {
@@ -969,6 +1008,7 @@ if (phone && phone.length < 10) {
             </div>
             <div className="user-info">
               <div className="user-name">{auth?.user?.name || auth?.username || 'Admin'}</div>
+              <div className="user-id">ID: {auth?.user?.id || 'N/A'}</div>
               <div className="user-role">{auth?.role || 'Admin'}</div>
             </div>
             <i
