@@ -37,6 +37,21 @@ function App() {
     user: null, // Complete user profile data
   });
 
+  // Centralized logout function
+  const handleLogout = () => {
+    // Clear all localStorage data
+    localStorage.clear();
+
+    // Reset auth state
+    setAuth({
+      isAuthenticated: false,
+      role: null,
+      username: "",
+      user: null,
+    });
+  };
+
+
   // Check for existing authentication on app load
   useEffect(() => {
     const token = localStorage.getItem('authToken');
@@ -52,9 +67,8 @@ function App() {
           user: user,
         });
       } catch (error) {
-        // Clear invalid session data
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('userSession');
+        // Clear invalid session data and logout
+        handleLogout();
       }
     }
   }, []);
@@ -87,7 +101,7 @@ function App() {
               userRole={auth.role} 
               isAuthenticated={auth.isAuthenticated}
             >
-              <AdminDashboard auth={auth} setAuth={setAuth} />
+              <AdminDashboard auth={auth} setAuth={setAuth} onLogout={handleLogout} />
             </ProtectedRoute>
           } 
         />
@@ -101,7 +115,8 @@ function App() {
               userRole={auth.role} 
               isAuthenticated={auth.isAuthenticated}
             >
-              <DoctorDashboard auth={auth} setAuth={setAuth} />
+              <DoctorDashboard auth={auth} setAuth={setAuth} onLogout={handleLogout} />
+
             </ProtectedRoute>
           } 
         />
@@ -115,7 +130,8 @@ function App() {
               userRole={auth.role} 
               isAuthenticated={auth.isAuthenticated}
             >
-              <PatientDashboard auth={auth} setAuth={setAuth} />
+              <PatientDashboard auth={auth} setAuth={setAuth} onLogout={handleLogout} />
+
             </ProtectedRoute>
           } 
         />
