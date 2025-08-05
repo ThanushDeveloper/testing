@@ -8,6 +8,8 @@ function PatientDashboard({ auth, setAuth }) {
   const handleLogout = () => {
     localStorage.clear();
     setAuth({ isAuthenticated: false, role: null, username: "", user: null });
+    // Force redirect to login page
+    window.location.href = '/';
   };
 
   const handleProfileClick = () => {
