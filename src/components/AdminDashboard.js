@@ -60,6 +60,9 @@ useEffect(() => {
     console.log('AdminDashboard: handleLogout called');
     try {
       // Use the centralized logout function
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userSession');
       onLogout();
       console.log('AdminDashboard: onLogout completed');
    
