@@ -2,7 +2,7 @@
 /* Patient List Styles */
 .patient-list-container {
   width: 100%;
-  padding: 20px;
+  padding: 0;
   transition: all 0.3s ease;
 }
 
@@ -27,7 +27,7 @@
 .patient-list-container.fullscreen-mode .table-container {
   flex: 1;
   max-height: none;
-  overflow-y: auto;
+  overflow: visible;
 }
 /* Fullscreen Toggle Button */
 .fullscreen-toggle-btn {
@@ -91,7 +91,7 @@
   position: relative;
 }
 .data-header {
-  padding: 24px;
+  padding: 24px 0;
   border-bottom: none;
   background: transparent;
 }
@@ -178,9 +178,8 @@
 }
 
 .table-container {
-  max-height: 70vh;
-  overflow-y: auto;
-  padding: 20px;
+  overflow: visible;
+  padding: 0;
 }
 
 /* ===== CARD LAYOUT STYLES ===== */
@@ -190,6 +189,7 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   padding: 0;
+  margin: 0;
 }
 
 .patient-card {
@@ -797,7 +797,7 @@
 
 @media (max-width: 768px) {
   .patient-list-container {
-    padding: 10px;
+    padding: 0;
   }
 
   .patient-list-container.fullscreen-mode {
@@ -806,7 +806,7 @@
 
   
   .data-header {
-    padding: 16px;
+    padding: 16px 0;
   }
   
   .data-title {
