@@ -366,7 +366,14 @@ const PatientList = () => {
         </div>
 
         <div className="table-container">
-          {filteredPatients.map((patient, index) => (
+          {filteredPatients.length === 0 ? (
+            <div className="no-data">
+              <i className="fas fa-users"></i>
+              <p>No patients found matching your criteria.</p>
+            </div>
+          ) : (
+            <div className="cards-grid">
+              {filteredPatients.map((patient, index) => (
                 <div key={patient.id || `patient-${index}`} className="patient-card">
                   <div className="card-header">
                     <div className="patient-image">
@@ -440,10 +447,10 @@ const PatientList = () => {
                 </div>
               ))}
             </div>
-          {/* )} */}
+          )}
         </div>
       </div>
-    // </div>
+    </div>
   );
 };
 

@@ -8,13 +8,20 @@ const DoctorList = () => {
   const [filteredDoctors, setFilteredDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [specializations, setSpecializations] = useState([]);  const [filters, setFilters] = useState({
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [specializations, setSpecializations] = useState([]);
+  const [filters, setFilters] = useState({
     filterType: 'all',
     searchTerm: '',
     gender: 'all',
     specialization: '',
     status: 'all'
   });
+
+  // Toggle fullscreen mode
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
 
   // Get auth token
   const getAuthToken = () => localStorage.getItem('authToken');
@@ -247,13 +254,31 @@ const DoctorList = () => {
   }
 
   return (
-    <div className="patient-list-container">
+    <div className={`patient-list-container ${isFullscreen ? 'fullscreen-mode' : ''}`}>
+      {/* Fullscreen Toggle Button */}
+      <button 
+        className="fullscreen-toggle-btn" 
+        onClick={toggleFullscreen}
+        title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+      >
+        <i className={`fas ${isFullscreen ? 'fa-compress' : 'fa-expand'}`}></i>
+      </button>
+
       <div className="data-container">
         <div className="data-header">
           <h2 className="data-title">
             <i className="fas fa-user-md"></i>
             Doctor Records ({filteredDoctors.length})
           </h2>
+
+          {/* Fullscreen toggle button */}
+          <button 
+            className="fullscreen-toggle-btn"
+            onClick={toggleFullscreen}
+            title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+          >
+            <i className={`fas ${isFullscreen ? 'fa-compress' : 'fa-expand'}`}></i>
+          </button>
           
           {error && (
             <div className="error-message">
@@ -358,7 +383,14 @@ const DoctorList = () => {
         </div>
 
         <div className="table-container">
-          {filteredDoctors.map((doctor) => (
+          {filteredDoctors.length === 0 ? (
+            <div className="no-data">
+              <i className="fas fa-user-md"></i>
+              <p>No doctors found matching your criteria.</p>
+            </div>
+          ) : (
+            <div className="cards-grid">
+              {filteredDoctors.map((doctor) => (
                 <div key={doctor.id} className="patient-card doctor-card">
                   <div className="card-header">
                     <div className="patient-image">
@@ -458,16 +490,15 @@ const DoctorList = () => {
                         <label><i className="fas fa-certificate"></i> License Number</label>
                         <span>{doctor.licenseNumber || 'Not provided'}</span>
                       </div>
-
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-          {/* )} */}
+          )}
         </div>
       </div>
-    // </div>
+    </div>
   );
 };
 
