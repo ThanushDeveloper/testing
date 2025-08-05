@@ -57,10 +57,25 @@ useEffect(() => {
 }, []);
 
   const handleLogout = () => {
-    // Use the centralized logout function
-    onLogout();
-    // Navigate to login page
-    navigate('/');
+    console.log('AdminDashboard: handleLogout called');
+    try {
+      // Use the centralized logout function
+      onLogout();
+      console.log('AdminDashboard: onLogout completed');
+      
+      // Use setTimeout to ensure state updates are processed before navigation
+      setTimeout(() => {
+        navigate('/', { replace: true });
+        console.log('AdminDashboard: Navigation to login completed');
+      }, 100);
+      
+    } catch (error) {
+      console.error('AdminDashboard: Error during logout:', error);
+      // Even if there's an error, try to navigate away
+      setTimeout(() => {
+        navigate('/', { replace: true });
+      }, 100);
+    }
   };
 
   const handleProfileClick = () => {
@@ -398,9 +413,15 @@ if (phone && phone.length < 10) {
 
             
               if (status === 401) {
-                alert("Authentication failed. Please log in again.");
-                // Automatically log out the user
-                handleLogout();
+                console.log('AdminDashboard: 401 error during patient registration - checking if token is actually invalid');
+                // Only logout if the error specifically indicates invalid token
+                const errorMessage = message.toLowerCase();
+                if (errorMessage.includes('token') || errorMessage.includes('unauthorized') || errorMessage.includes('expired')) {
+                  alert("Your session has expired. Please log in again.");
+                  handleLogout();
+                } else {
+                  alert("Authentication failed. Please check your credentials and try again.");
+                }
               } else if (status === 400) {
                 alert(`Invalid data: ${message}`);
               } else if (status === 409) {
@@ -985,8 +1006,12 @@ if (phone && phone.length < 10) {
                   <span>Settings</span>
                 </div>
                 <div className="dropdown-divider"></div>
-                <div className="dropdown-item signout-item" onClick={handleLogout}>
-
+                <div className="dropdown-item signout-item" onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('Logout button clicked');
+                  handleLogout();
+                }}>
                   <i className="fas fa-sign-out-alt"></i>
                   <span>Sign Out</span>
                 </div>
