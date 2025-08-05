@@ -13,7 +13,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: #f5f7fa;
+  background: var(--background-color);
   z-index: 9999;
   padding: 20px;
   overflow: auto;
@@ -37,16 +37,16 @@
 }
 
 .patient-list-container.fullscreen-mode .patient-card {
-  background: #ffffff;
-  border: 1px solid #e1e5e9;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
 }
 
 .patient-list-container.fullscreen-mode .card-header {
-  background: #ffffff;
+  background: var(--surface-color);
 }
 
 .patient-list-container.fullscreen-mode .card-body {
-  background: #ffffff;
+  background: var(--surface-color);
 }
 
 
