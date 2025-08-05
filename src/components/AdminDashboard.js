@@ -4,6 +4,8 @@ import "../styles/PatientList.css";
 import "../styles/DoctorStyles.css";
 import PatientList from "./PatientList";
 import DoctorRegistration from "./DoctorRegistration";
+import AdminRegistration from "./AdminRegistration";
+import AdminList from "./AdminList";
 import DoctorList from "./DoctorList";
 import axios from "axios";
 
@@ -1308,6 +1310,41 @@ if (phone && phone.length < 10) {
             <DoctorList />
           </div>
         </div>
+        {/* Admin Section */}
+        <div id="admin-section" className="section">
+          <div className="page-header">
+            <nav className="breadcrumb">
+              <span className="breadcrumb-item">Dashboard</span>
+              <i className="breadcrumb-separator fas fa-chevron-right"></i>
+              <span className="breadcrumb-item active">Admin Management</span>
+            </nav>
+            <h1 className="page-title">Admin Management</h1>
+            <p className="page-subtitle">
+              Manage admin registrations and view admin information.
+            </p>
+          </div>
+                
+          {/* Tab Navigation */}
+          <div className="tab-navigation">
+            <button className="tab-btn active" data-tab="admin-register">
+              <i className="fas fa-user-shield"></i> Register Admin
+            </button>
+            <button className="tab-btn" data-tab="admin-list">
+              <i className="fas fa-list"></i> Admin List
+            </button>
+          </div>
+
+          {/* Admin Registration Tab */}
+          <div id="admin-register" className="tab-content active">
+            <AdminRegistration />
+          </div>
+          <div id="admin-list" className="tab-content">
+            <AdminList />
+          </div>
+        </div>
+
+          {/* Admin List Tab */}
+ 
       </main>
     </div>
   );

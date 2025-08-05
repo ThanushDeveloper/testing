@@ -15,6 +15,11 @@ const PatientList = () => {
     dateFilter: 'all'
   });
 
+  // Toggle fullscreen mode
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+
   // Get auth token
   const getAuthToken = () => localStorage.getItem('authToken');
 
@@ -147,21 +152,23 @@ const PatientList = () => {
     }
 
     setFilteredPatients(filtered);
-};
+  };
 
-// Handle filter changes
-const handleFilterChange = (filterName, value) => {
+  // Handle filter changes
+  const handleFilterChange = (filterName, value) => {
+
     setFilters(prev => ({
-        ...prev,
-        [filterName]: value
+      ...prev,
+      [filterName]: value
     }));
-};
+  };
 
-// Handle search by specific field
-const handleSpecificSearch = async (type, value) => {
+  // Handle search by specific field
+  const handleSpecificSearch = async (type, value) => {
     if (!value.trim()) {
-        loadPatients();
-        return;
+      loadPatients();
+      return;
+
     }
 
     setLoading(true);
@@ -175,6 +182,9 @@ const handleSpecificSearch = async (type, value) => {
       setLoading(false);
     }
   };
+
+
+
 
   // Delete patient
   const handleDeletePatient = async (patientId) => {
@@ -195,9 +205,6 @@ const handleSpecificSearch = async (type, value) => {
       alert('Failed to delete patient. Please try again.');
     }
   };
-
-
-
 
 
   // Format date
@@ -232,13 +239,32 @@ const handleSpecificSearch = async (type, value) => {
   }
 
   return (
-    <div className="patient-list-container">
+    <div className={`patient-list-container ${isFullscreen ? 'fullscreen-mode' : ''}`}>
+      {/* Fullscreen Toggle Button */}
+      <button 
+        className="fullscreen-toggle-btn" 
+        onClick={toggleFullscreen}
+        title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+      >
+        <i className={`fas ${isFullscreen ? 'fa-compress' : 'fa-expand'}`}></i>
+      </button>
+
       <div className="data-container">
         <div className="data-header">
           <h2 className="data-title">
             <i className="fas fa-users"></i>
             Patient Records ({filteredPatients.length})
           </h2>
+
+          {/* Fullscreen toggle button */}
+          <button 
+            className="fullscreen-toggle-btn"
+            onClick={toggleFullscreen}
+            title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+          >
+            <i className={`fas ${isFullscreen ? 'fa-compress' : 'fa-expand'}`}></i>
+          </button>
+
           
           {error && (
             <div className="error-message">
@@ -267,11 +293,16 @@ const handleSpecificSearch = async (type, value) => {
               value={filters.gender}
               onChange={(e) => {
                 handleFilterChange('gender', e.target.value);
-                handleFilterChange('filterType', e.target.value ? 'gender' : 'all');
+                handleFilterChange('filterType', e.target.value && e.target.value !== 'all' ? 'gender' : 'all');
+
               }}
             >
-              <option value="">All Genders</option>
+              <option value="all">All Genders</option>
+
               <option value="MALE">Male</option>
+              <option value="FEMALE">Female</option>
+              <option value="OTHER">Other</option>
+
             </select>
 
             {/* Treatment Filter */}
@@ -280,7 +311,8 @@ const handleSpecificSearch = async (type, value) => {
               value={filters.treatment}
               onChange={(e) => {
                 handleFilterChange('treatment', e.target.value);
-                handleFilterChange('filterType', e.target.value ? 'treatment' : 'all');              }}
+                handleFilterChange('filterType', e.target.value ? 'treatment' : 'all');
+              }}
             >
               <option value="">All Treatments</option>
               <option value="Physiotherapy">Physiotherapy</option>
@@ -358,8 +390,8 @@ const handleSpecificSearch = async (type, value) => {
                   </td>
                 </tr>
               ) : (
-                filteredPatients.map((patient) => (
-                  <tr key={patient.id}>
+                filteredPatients.map((patient, index) => (
+                  <tr key={patient.id || `patient-${index}`}>
                     <td>
                       <div className="patient-image">
                         {patient.patientImage ? (
