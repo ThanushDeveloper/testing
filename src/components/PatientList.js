@@ -424,16 +424,40 @@ const PatientList = () => {
                         <span>{formatDate(patient.dob)}</span>
                       </div>
                       <div className="info-item">
+                        <label><i className="fas fa-hourglass-half"></i> Age</label>
+                        <span>{patient.dob ? Math.floor((new Date() - new Date(patient.dob)) / (365.25 * 24 * 60 * 60 * 1000)) : 'N/A'} years</span>
+                      </div>
+                      <div className="info-item">
                         <label><i className="fas fa-map-marker-alt"></i> Address</label>
                         <span className="address-text">{patient.address}</span>
                       </div>
                       <div className="info-item">
+                        <label><i className="fas fa-id-card"></i> Emergency Contact</label>
+                        <span>{patient.emergencyContact || 'Not provided'}</span>
+                      </div>
+                      <div className="info-item specialization-item">
                         <label><i className="fas fa-stethoscope"></i> Treatment</label>
                         <span className="treatment-badge">{patient.treatment}</span>
                       </div>
                       <div className="info-item">
                         <label><i className="fas fa-calendar"></i> Registered</label>
                         <span>{formatDate(patient.createdAt)}</span>
+                      </div>
+                      <div className="info-item">
+                        <label><i className="fas fa-clock"></i> Last Visit</label>
+                        <span>{patient.lastVisit ? formatDate(patient.lastVisit) : 'No visits yet'}</span>
+                      </div>
+                      <div className="info-item">
+                        <label><i className="fas fa-notes-medical"></i> Medical History</label>
+                        <span className="address-text">{patient.medicalHistory || 'No history recorded'}</span>
+                      </div>
+                      <div className="info-item">
+                        <label><i className="fas fa-pills"></i> Allergies</label>
+                        <span className="address-text">{patient.allergies || 'None known'}</span>
+                      </div>
+                      <div className="info-item">
+                        <label><i className="fas fa-heartbeat"></i> Blood Group</label>
+                        <span className="treatment-badge">{patient.bloodGroup || 'Unknown'}</span>
                       </div>
                     </div>
                   </div>

@@ -1,24 +1,30 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import '../styles/PatientList.css';
 
 const AdminList = () => {
   const [admins, setAdmins] = useState([]);
   const [filteredAdmins, setFilteredAdmins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [filters, setFilters] = useState({
     searchTerm: '',
     status: '',
     adminType: ''
   });
 
+  // Toggle fullscreen mode
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+
   // Get auth token
   const getAuthToken = () => localStorage.getItem('authToken');
 
   // Fetch all admins
   const fetchAllAdmins = useCallback(async () => {
-
     try {
       const token = getAuthToken();
       const response = await axios.get('http://localhost:8080/admin/all', {
@@ -48,6 +54,7 @@ const AdminList = () => {
       setLoading(false);
     }
   }, [fetchAllAdmins]);
+
   // Apply client-side filtering
   const applyFilters = useCallback(() => {
     let filtered = [...admins];
@@ -105,6 +112,9 @@ const AdminList = () => {
 
   // Update admin status
   const handleStatusUpdate = async (adminId, newStatus) => {
+    if (!window.confirm(`Are you sure you want to change the admin's status to ${newStatus}?`)) {
+      return;
+    }
     try {
       const token = getAuthToken();
       await axios.put(
@@ -138,6 +148,7 @@ const AdminList = () => {
       status === 'INACTIVE' ? 'status-inactive' : 'status-suspended';
     return <span className={`status-badge ${statusClass}`}>{status}</span>;
   };
+
   // Format admin type
   const getAdminTypeBadge = (adminType) => {
     if (!adminType) {
@@ -147,6 +158,34 @@ const AdminList = () => {
       adminType === 'SUPER_ADMIN' ? 'admin-type-super' :
       adminType === 'STAFF_ADMIN' ? 'admin-type-staff' : 'admin-type-support';
     return <span className={`admin-type-badge ${typeClass}`}>{adminType.replace('_', ' ')}</span>;
+  };
+
+  // Get admin permissions display
+  const getPermissionsDisplay = (adminType) => {
+    switch(adminType) {
+      case 'SUPER_ADMIN':
+        return 'Full System Access';
+      case 'STAFF_ADMIN':
+        return 'Staff Management';
+      case 'SUPPORT_ADMIN':
+        return 'User Support';
+      default:
+        return 'Limited Access';
+    }
+  };
+
+  // Get admin responsibilities
+  const getResponsibilities = (adminType) => {
+    switch(adminType) {
+      case 'SUPER_ADMIN':
+        return 'System Configuration, User Management, Security';
+      case 'STAFF_ADMIN':
+        return 'Staff Scheduling, Reports, Operations';
+      case 'SUPPORT_ADMIN':
+        return 'Customer Support, Help Desk, Tickets';
+      default:
+        return 'Basic Operations';
+    }
   };
 
   // Initial load
@@ -169,13 +208,31 @@ const AdminList = () => {
   }
 
   return (
-    <div className="admin-list-container">
+    <div className={`patient-list-container ${isFullscreen ? 'fullscreen-mode' : ''}`}>
+      {/* Fullscreen Toggle Button */}
+      <button 
+        className="fullscreen-toggle-btn" 
+        onClick={toggleFullscreen}
+        title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+      >
+        <i className={`fas ${isFullscreen ? 'fa-compress' : 'fa-expand'}`}></i>
+      </button>
+
       <div className="data-container">
         <div className="data-header">
           <h2 className="data-title">
             <i className="fas fa-user-shield"></i>
             Admin Records ({filteredAdmins.length})
           </h2>
+
+          {/* Fullscreen toggle button */}
+          <button 
+            className="fullscreen-toggle-btn"
+            onClick={toggleFullscreen}
+            title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+          >
+            <i className={`fas ${isFullscreen ? 'fa-compress' : 'fa-expand'}`}></i>
+          </button>
           
           {error && (
             <div className="error-message">
@@ -205,7 +262,6 @@ const AdminList = () => {
             >
               <option value="">All Admin Types</option>
               <option value="SUPER_ADMIN">Super Admin</option>
-
               <option value="STAFF_ADMIN">Staff Admin</option>
               <option value="SUPPORT_ADMIN">Support Admin</option>
             </select>
@@ -227,86 +283,91 @@ const AdminList = () => {
         </div>
 
         <div className="table-container">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Photo</th>
-                <th>Admin ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Admin Type</th>
-                <th>Status</th>
-                <th>Created</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredAdmins.length === 0 ? (
-                <tr>
-                  <td colSpan="9" className="no-data">
-                    <i className="fas fa-user-shield"></i>
-                    <p>No admins found matching your criteria.</p>
-                  </td>
-                </tr>
-              ) : (
-                filteredAdmins.map((admin, index) => (
-                  <tr key={admin.id || `admin-${index}`}>
-                    <td>
-                      <div className="patient-image">
-                        {admin.adminPhoto ? (
-                          <img 
-                            src={`data:image/jpeg;base64,${admin.adminPhoto}`}
-                            alt={admin.name}
-                            className="patient-avatar"
-                          />
-                        ) : (
-                          <div className="patient-avatar-placeholder">
-                            <i className="fas fa-user-shield"></i>
-                          </div>
-                        )}
+          {filteredAdmins.length === 0 ? (
+            <div className="no-data">
+              <i className="fas fa-user-shield"></i>
+              <p>No admins found matching your criteria.</p>
+            </div>
+          ) : (
+            filteredAdmins.map((admin, index) => (
+              <div key={admin.id || `admin-${index}`} className="patient-card admin-card">
+                <div className="card-header">
+                  <div className="patient-image">
+                    {admin.adminPhoto ? (
+                      <img 
+                        src={`data:image/jpeg;base64,${admin.adminPhoto}`}
+                        alt={admin.name}
+                        className="patient-avatar-large"
+                      />
+                    ) : (
+                      <div className="patient-avatar-placeholder-large">
+                        <i className="fas fa-user-shield"></i>
                       </div>
-                    </td>
-                    <td>#{admin.id}</td>
-                    <td className="patient-name">{admin.name}</td>
-                    <td>{admin.email}</td>
-                    <td>{admin.phone}</td>
-                    <td>{getAdminTypeBadge(admin.adminType)}</td>
-                    <td>{getStatusBadge(admin.status)}</td>
-                    <td>{formatDate(admin.createdAt)}</td>
-                    <td>
-                      <div className="action-buttons">
-                        <select
-                          className="status-select"
-                          value={admin.status}
-                          onChange={(e) => handleStatusUpdate(admin.id, e.target.value)}
-                          title="Update Status"
-                        >
-                          <option value="ACTIVE">Active</option>
-                          <option value="INACTIVE">Inactive</option>
-                          <option value="SUSPENDED">Suspended</option>
-                        </select>
-                        <button 
-                          className="btn-edit"
-                          onClick={() => alert(`Edit functionality for ${admin.name} will be implemented`)}
-                          title="Edit Admin"
-                        >
-                          <i className="fas fa-edit"></i>
-                        </button>
-                        <button 
-                          className="btn-delete"
-                          onClick={() => handleDeleteAdmin(admin.id)}
-                          title="Delete Admin"
-                        >
-                          <i className="fas fa-trash"></i>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                    )}
+                  </div>
+                  <div className="patient-basic-info">
+                    <h3 className="patient-name">#{admin.id} - {admin.name}</h3>
+                    <div className="status-row">
+                      {getStatusBadge(admin.status)}
+                      {getAdminTypeBadge(admin.adminType)}
+                    </div>
+                  </div>
+                  <div className="card-actions">
+                    <button 
+                      className="btn-edit"
+                      onClick={() => alert(`Edit functionality for ${admin.name} will be implemented`)}
+                      title="Edit Admin"
+                    >
+                      <i className="fas fa-edit"></i>
+                    </button>
+                    <button 
+                      className={`btn-status ${admin.status === 'ACTIVE' ? 'btn-deactivate' : 'btn-activate'}`}
+                      onClick={() => handleStatusUpdate(admin.id, admin.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE')}
+                      title={admin.status === 'ACTIVE' ? 'Deactivate Admin' : 'Activate Admin'}
+                    >
+                      <i className={`fas ${admin.status === 'ACTIVE' ? 'fa-user-slash' : 'fa-user-check'}`}></i>
+                    </button>
+                    <button 
+                      className="btn-delete"
+                      onClick={() => handleDeleteAdmin(admin.id)}
+                      title="Delete Admin"
+                    >
+                      <i className="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="card-body">
+                  <div className="info-grid">
+                    <div className="info-item">
+                      <label><i className="fas fa-envelope"></i> Email</label>
+                      <span>{admin.email}</span>
+                    </div>
+                    <div className="info-item">
+                      <label><i className="fas fa-phone"></i> Phone</label>
+                      <span>{admin.phone}</span>
+                    </div>
+                    <div className="info-item">
+                      <label><i className="fas fa-birthday-cake"></i> Date of Birth</label>
+                      <span>{formatDate(admin.dob)}</span>
+                    </div>
+                    <div className="info-item">
+                      <label><i className="fas fa-calendar"></i> Created</label>
+                      <span>{formatDate(admin.createdAt)}</span>
+                    </div>
+                    <div className="info-item specialization-item">
+                      <label><i className="fas fa-key"></i> Permissions</label>
+                      <span className="treatment-badge">{getPermissionsDisplay(admin.adminType)}</span>
+                    </div>
+                    <div className="info-item specialization-item">
+                      <label><i className="fas fa-tasks"></i> Responsibilities</label>
+                      <span className="address-text">{getResponsibilities(admin.adminType)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
