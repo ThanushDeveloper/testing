@@ -13,7 +13,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: var(--card-bg);
+  background: #f5f7fa;
   z-index: 9999;
   padding: 20px;
   overflow: auto;
@@ -24,12 +24,32 @@
   display: flex;
   flex-direction: column;
 }
+
 .patient-list-container.fullscreen-mode .table-container {
   flex: 1;
   max-height: none;
   overflow: visible;
-
 }
+
+.patient-list-container.fullscreen-mode .cards-grid {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.patient-list-container.fullscreen-mode .patient-card {
+  background: #ffffff;
+  border: 1px solid #e1e5e9;
+}
+
+.patient-list-container.fullscreen-mode .card-header {
+  background: #ffffff;
+}
+
+.patient-list-container.fullscreen-mode .card-body {
+  background: #ffffff;
+}
+
+
 /* Fullscreen Toggle Button */
 .fullscreen-toggle-btn {
   position: absolute;
@@ -179,8 +199,7 @@
 }
 
 .table-container {
-  max-height: 70vh;
-  overflow-y: auto;
+  overflow: visible;
   padding: 20px;
 }
 
@@ -751,6 +770,12 @@
     grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
 
   }
+
+  .patient-list-container.fullscreen-mode .cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
 }
 
 
@@ -786,6 +811,12 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
   }
+
+  .patient-list-container.fullscreen-mode .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
 
   .info-grid {
     grid-template-columns: 1fr;
@@ -843,6 +874,12 @@
     grid-template-columns: 1fr;
     gap: 12px;
   }
+
+  .patient-list-container.fullscreen-mode .cards-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
 
   .card-header {
     padding: 16px;

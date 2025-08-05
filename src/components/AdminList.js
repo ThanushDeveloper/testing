@@ -211,16 +211,6 @@ const AdminList = () => {
 
   return (
     <div className={`patient-list-container ${isFullscreen ? 'fullscreen-mode' : ''}`}>
-      {/* Fullscreen Toggle Button */}
-      <button 
-        className="fullscreen-toggle-btn" 
-        onClick={toggleFullscreen}
-        title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-      >
-        <i className={`fas ${isFullscreen ? 'fa-compress' : 'fa-expand'}`}></i>
-      </button>
-
-
       <div className="data-container">
         <div className="data-header">
           <h2 className="data-title">
