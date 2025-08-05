@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
 const AdminList = () => {
@@ -17,7 +17,8 @@ const AdminList = () => {
   const getAuthToken = () => localStorage.getItem('authToken');
 
   // Fetch all admins
-  const fetchAllAdmins = async () => {
+  const fetchAllAdmins = useCallback(async () => {
+
     try {
       const token = getAuthToken();
       const response = await axios.get('http://localhost:8080/admin/all', {
@@ -28,12 +29,13 @@ const AdminList = () => {
       console.error('Error fetching all admins:', error);
       throw error;
     }
-  };
+  }, []);
 
   // Load admins data
-  const loadAdmins = async () => {
-   setLoading(true);
-    setError('');    try {
+  const loadAdmins = useCallback(async () => {
+    setLoading(true);
+    setError('');
+    try {
       const data = await fetchAllAdmins();
       setAdmins(data);
       setFilteredAdmins(data);
@@ -45,10 +47,9 @@ const AdminList = () => {
     } finally {
       setLoading(false);
     }
-  };
-
+  }, [fetchAllAdmins]);
   // Apply client-side filtering
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     let filtered = [...admins];
 
     // Apply search filter
@@ -72,7 +73,7 @@ const AdminList = () => {
     }
 
     setFilteredAdmins(filtered);
-  };
+  }, [admins, filters]);
 
   // Handle filter changes
   const handleFilterChange = (filterName, value) => {
@@ -148,12 +149,12 @@ const AdminList = () => {
   // Initial load
   useEffect(() => {
     loadAdmins();
-  }, []);
+  }, [loadAdmins]);
 
   // Apply filters when search term or filters change
   useEffect(() => {
     applyFilters();
-  }, [filters, admins]);
+  }, [applyFilters]);
 
   if (loading) {
     return (
@@ -193,9 +194,15 @@ const AdminList = () => {
               <option value="SUSPENDED">Suspended</option>
             </select>
 
-            {/* Admin Type Filter */}+            <select 
-               onChange={(e) => handleFilterChange('adminType', e.target.value)}>
-              <option value="">All Admin Types</option>+              <option value="SUPER_ADMIN">Super Admin</option>
+            {/* Admin Type Filter */}
+            <select 
+              className="filter-select"
+              value={filters.adminType}
+              onChange={(e) => handleFilterChange('adminType', e.target.value)}
+            >
+              <option value="">All Admin Types</option>
+              <option value="SUPER_ADMIN">Super Admin</option>
+
               <option value="STAFF_ADMIN">Staff Admin</option>
               <option value="SUPPORT_ADMIN">Support Admin</option>
             </select>
