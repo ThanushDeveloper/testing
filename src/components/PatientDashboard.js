@@ -1,15 +1,17 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/AdminDashboard.css";
 
-function PatientDashboard({ auth, setAuth }) {
+function PatientDashboard({ auth, setAuth, onLogout }) {
+  const navigate = useNavigate();
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
 
   const handleLogout = () => {
-    localStorage.clear();
-    setAuth({ isAuthenticated: false, role: null, username: "", user: null });
-    // Force redirect to login page
-    window.location.href = '/';
+    // Use the centralized logout function
+    onLogout();
+    // Navigate to login page
+    navigate('/');
   };
 
   const handleProfileClick = () => {
