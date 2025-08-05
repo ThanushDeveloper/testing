@@ -968,7 +968,7 @@ if (phone && phone.length < 10) {
               )}
             </div>
             <div className="user-info">
-              <div className="user-name">{auth?.user?.name || auth?.username || 'Admin'}</div>
+              <div className="user-name">{localStorage.getItem('userId') || auth?.user?.id || 'N/A'}</div>
               <div className="user-role">{auth?.role || 'Admin'}</div>
             </div>
             <i
