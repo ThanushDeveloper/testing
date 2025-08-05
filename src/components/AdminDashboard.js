@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/AdminDashboard.css";
 import "../styles/PatientList.css";
 import "../styles/DoctorStyles.css";
@@ -10,7 +11,8 @@ import DoctorList from "./DoctorList";
 import axios from "axios";
 
 // const AdminDashboard = () => {
-function AdminDashboard({ auth, setAuth }) {
+function AdminDashboard({ auth, setAuth, onLogout }) {
+  const navigate = useNavigate();
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem("theme") || "dark";
   });
@@ -54,11 +56,11 @@ useEffect(() => {
   fetchStats();
 }, []);
 
-  const handleSignout = () => {
-    localStorage.clear();
-    setAuth({ isAuthenticated: false, role: null, username: "", user: null });
-    // Force redirect to login page
-    window.location.href = '/';
+  const handleLogout = () => {
+    // Use the centralized logout function
+    onLogout();
+    // Navigate to login page
+    navigate('/');
   };
 
   const handleProfileClick = () => {
@@ -397,6 +399,8 @@ if (phone && phone.length < 10) {
             
               if (status === 401) {
                 alert("Authentication failed. Please log in again.");
+                // Automatically log out the user
+                handleLogout();
               } else if (status === 400) {
                 alert(`Invalid data: ${message}`);
               } else if (status === 409) {
@@ -981,7 +985,8 @@ if (phone && phone.length < 10) {
                   <span>Settings</span>
                 </div>
                 <div className="dropdown-divider"></div>
-                <div className="dropdown-item signout-item" onClick={handleSignout}>
+                <div className="dropdown-item signout-item" onClick={handleLogout}>
+
                   <i className="fas fa-sign-out-alt"></i>
                   <span>Sign Out</span>
                 </div>
