@@ -1,17 +1,25 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import '../styles/PatientList.css';
+import '../styles/PatientList.css';
 
 const AdminList = () => {
   const [admins, setAdmins] = useState([]);
   const [filteredAdmins, setFilteredAdmins] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const [filters, setFilters] = useState({
     searchTerm: '',
     status: '',
     adminType: ''
   });
+
+    // Toggle fullscreen mode
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
 
   // Get auth token
   const getAuthToken = () => localStorage.getItem('authToken');
@@ -105,6 +113,10 @@ const AdminList = () => {
 
   // Update admin status
   const handleStatusUpdate = async (adminId, newStatus) => {
+    if (!window.confirm(`Are you sure you want to change the admin's status to ${newStatus}?`)) {
+      return;
+    }
+
     try {
       const token = getAuthToken();
       await axios.put(
@@ -149,6 +161,35 @@ const AdminList = () => {
     return <span className={`admin-type-badge ${typeClass}`}>{adminType.replace('_', ' ')}</span>;
   };
 
+  // Get admin permissions display
+  const getPermissionsDisplay = (adminType) => {
+    switch(adminType) {
+      case 'SUPER_ADMIN':
+        return 'Full System Access';
+      case 'STAFF_ADMIN':
+        return 'Staff Management';
+      case 'SUPPORT_ADMIN':
+        return 'User Support';
+      default:
+        return 'Limited Access';
+    }
+  };
+
+  // Get admin responsibilities
+  const getResponsibilities = (adminType) => {
+    switch(adminType) {
+      case 'SUPER_ADMIN':
+        return 'System Configuration, User Management, Security';
+      case 'STAFF_ADMIN':
+        return 'Staff Scheduling, Reports, Operations';
+      case 'SUPPORT_ADMIN':
+        return 'Customer Support, Help Desk, Tickets';
+      default:
+        return 'Basic Operations';
+    }
+  };
+
+
   // Initial load
   useEffect(() => {
     loadAdmins();
@@ -169,14 +210,33 @@ const AdminList = () => {
   }
 
   return (
-    <div className="admin-list-container">
+    <div className={`patient-list-container ${isFullscreen ? 'fullscreen-mode' : ''}`}>
+      {/* Fullscreen Toggle Button */}
+      <button 
+        className="fullscreen-toggle-btn" 
+        onClick={toggleFullscreen}
+        title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+      >
+        <i className={`fas ${isFullscreen ? 'fa-compress' : 'fa-expand'}`}></i>
+      </button>
+
+
       <div className="data-container">
         <div className="data-header">
           <h2 className="data-title">
             <i className="fas fa-user-shield"></i>
             Admin Records ({filteredAdmins.length})
           </h2>
-          
+
+          {/* Fullscreen toggle button */}
+          <button 
+            className="fullscreen-toggle-btn"
+            onClick={toggleFullscreen}
+            title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+          >
+            <i className={`fas ${isFullscreen ? 'fa-compress' : 'fa-expand'}`}></i>
+          </button>
+
           {error && (
             <div className="error-message">
               <i className="fas fa-exclamation-triangle"></i>
@@ -227,86 +287,92 @@ const AdminList = () => {
         </div>
 
         <div className="table-container">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Photo</th>
-                <th>Admin ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Admin Type</th>
-                <th>Status</th>
-                <th>Created</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredAdmins.length === 0 ? (
-                <tr>
-                  <td colSpan="9" className="no-data">
-                    <i className="fas fa-user-shield"></i>
-                    <p>No admins found matching your criteria.</p>
-                  </td>
-                </tr>
-              ) : (
-                filteredAdmins.map((admin, index) => (
-                  <tr key={admin.id || `admin-${index}`}>
-                    <td>
-                      <div className="patient-image">
-                        {admin.adminPhoto ? (
-                          <img 
-                            src={`data:image/jpeg;base64,${admin.adminPhoto}`}
-                            alt={admin.name}
-                            className="patient-avatar"
-                          />
-                        ) : (
-                          <div className="patient-avatar-placeholder">
-                            <i className="fas fa-user-shield"></i>
-                          </div>
-                        )}
+            
+ 
+          {filteredAdmins.length === 0 ? (
+            <div className="no-data">
+              <i className="fas fa-user-shield"></i>
+              <p>No admins found matching your criteria.</p>
+            </div>
+          ) : (
+            <div className="cards-grid">
+              {filteredAdmins.map((admin, index) => (
+                <div key={admin.id || `admin-${index}`} className="patient-card admin-card">
+                  <div className="card-header">
+                    <div className="patient-image">
+                      {admin.adminPhoto ? (
+                        <img 
+                          src={`data:image/jpeg;base64,${admin.adminPhoto}`}
+                          alt={admin.name}
+                          className="patient-avatar-large"
+                        />
+                      ) : (
+                        <div className="patient-avatar-placeholder-large">
+                          <i className="fas fa-user-shield"></i>
+                        </div>
+                      )}
+                    </div>
+                    <div className="patient-basic-info">
+                      <h3 className="patient-name">#{admin.id} - {admin.name}</h3>
+                      <div className="status-row">
+                        {getStatusBadge(admin.status)}
+                        {getAdminTypeBadge(admin.adminType)}
+ 
+          
                       </div>
-                    </td>
-                    <td>#{admin.id}</td>
-                    <td className="patient-name">{admin.name}</td>
-                    <td>{admin.email}</td>
-                    <td>{admin.phone}</td>
-                    <td>{getAdminTypeBadge(admin.adminType)}</td>
-                    <td>{getStatusBadge(admin.status)}</td>
-                    <td>{formatDate(admin.createdAt)}</td>
-                    <td>
-                      <div className="action-buttons">
-                        <select
-                          className="status-select"
-                          value={admin.status}
-                          onChange={(e) => handleStatusUpdate(admin.id, e.target.value)}
-                          title="Update Status"
-                        >
-                          <option value="ACTIVE">Active</option>
-                          <option value="INACTIVE">Inactive</option>
-                          <option value="SUSPENDED">Suspended</option>
-                        </select>
-                        <button 
-                          className="btn-edit"
-                          onClick={() => alert(`Edit functionality for ${admin.name} will be implemented`)}
-                          title="Edit Admin"
-                        >
-                          <i className="fas fa-edit"></i>
-                        </button>
-                        <button 
-                          className="btn-delete"
-                          onClick={() => handleDeleteAdmin(admin.id)}
-                          title="Delete Admin"
-                        >
-                          <i className="fas fa-trash"></i>
-                        </button>
+
                       </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+
+
+                    <div className="card-actions">
+                      <select
+                        className="status-select"
+                        value={admin.status}
+                        onChange={(e) => handleStatusUpdate(admin.id, e.target.value)}
+                        title="Update Status"
+                      >
+                        <option value="ACTIVE">Active</option>
+                        <option value="INACTIVE">Inactive</option>
+                        <option value="SUSPENDED">Suspended</option>
+                      </select>
+                      <button 
+                        className="btn-edit"
+                        onClick={() => alert(`Edit functionality for ${admin.name} will be implemented`)}
+                        title="Edit Admin"
+                      >
+                        <i className="fas fa-edit"></i>
+                      </button>
+                      <button 
+                        className="btn-delete"
+                        onClick={() => handleDeleteAdmin(admin.id)}
+                        title="Delete Admin"
+                      >
+                        <i className="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="card-body">
+                    <div className="info-grid">
+                      <div className="info-item">
+                        <label><i className="fas fa-envelope"></i> Email</label>
+                        <span>{admin.email}</span>
+                      </div>
+                      <div className="info-item">
+                        <label><i className="fas fa-phone"></i> Phone</label>
+                        <span>{admin.phone}</span>
+                      </div>
+                      <div className="info-item">
+                        <label><i className="fas fa-calendar"></i> Created</label>
+                        <span>{formatDate(admin.createdAt)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
         </div>
       </div>
     </div>

@@ -422,10 +422,43 @@ const DoctorList = () => {
                         <label><i className="fas fa-birthday-cake"></i> Date of Birth</label>
                         <span>{formatDate(doctor.dob)}</span>
                       </div>
+                      <div className="info-item">
+                        <label><i className="fas fa-hourglass-half"></i> Age</label>
+                        <span>{doctor.dob ? Math.floor((new Date() - new Date(doctor.dob)) / (365.25 * 24 * 60 * 60 * 1000)) : 'N/A'} years</span>
+                      </div>
                       <div className="info-item specialization-item">
                         <label><i className="fas fa-stethoscope"></i> Specialization</label>
                         <span className="treatment-badge specialization-badge">{doctor.specialization}</span>
                       </div>
+                      <div className="info-item">
+                        <label><i className="fas fa-graduation-cap"></i> Qualification</label>
+                        <span>{doctor.qualification || 'MD'}</span>
+                      </div>
+                      <div className="info-item">
+                        <label><i className="fas fa-calendar"></i> Joined</label>
+                        <span>{formatDate(doctor.createdAt)}</span>
+                      </div>
+                      <div className="info-item">
+                        <label><i className="fas fa-star"></i> Experience</label>
+                        <span>{doctor.experience || 'Not specified'} years</span>
+                      </div>
+                      <div className="info-item">
+                        <label><i className="fas fa-hospital"></i> Department</label>
+                        <span className="treatment-badge">{doctor.department || doctor.specialization}</span>
+                      </div>
+                      <div className="info-item">
+                        <label><i className="fas fa-clock"></i> Consultation Fee</label>
+                        <span>${doctor.consultationFee || '50'}</span>
+                      </div>
+                      <div className="info-item">
+                        <label><i className="fas fa-users"></i> Patients Served</label>
+                        <span>{doctor.patientsServed || '0'}</span>
+                      </div>
+                      <div className="info-item specialization-item">
+                        <label><i className="fas fa-certificate"></i> License Number</label>
+                        <span>{doctor.licenseNumber || 'Not provided'}</span>
+                      </div>
+
                     </div>
                   </div>
                 </div>
