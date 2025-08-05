@@ -6,15 +6,14 @@ export default function Navbar({ auth, setAuth }) {
 
   const handleLogout = () => {
     // Clear all authentication data
-
     localStorage.clear();
-   
     
-    // Reset auth state
+    // Reset auth state with all properties
     setAuth({
       isAuthenticated: false,
       role: null,
       username: "",
+      user: null
     });
     
     // Navigate back to login

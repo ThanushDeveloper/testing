@@ -137,6 +137,9 @@ import axios from 'axios';
 
         if (status === 401) {
           alert("Authentication failed. Please log in again.");
+          // Clear authentication data and redirect to login
+          localStorage.clear();
+          window.location.href = '/';
         } else if (status === 400) {
           alert(`Invalid data: ${message}`);
         } else if (status === 409) {
