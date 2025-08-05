@@ -54,23 +54,17 @@ useEffect(() => {
   fetchStats();
 }, []);
 
-const handleSignout = () => {
-  localStorage.clear();
-  setAuth({ isAuthenticated: false, role: null, username: "", user: null });
-  // Force redirect to login page
-  window.location.href = '/';
-};
+  const handleSignout = () => {
+    localStorage.clear();
+    setAuth({ isAuthenticated: false, role: null, username: "", user: null });
+    // Force redirect to login page
+    window.location.href = '/';
+  };
 
-const handleProfileClick = () => {
-  setShowProfileModal(true);
-  setShowUserDropdown(false); 
-
-};
-
-
-// 
-// 
-// 
+  const handleProfileClick = () => {
+    setShowProfileModal(true);
+    setShowUserDropdown(false); 
+  };
 
   useEffect(() => {
     // Apply theme to body
