@@ -267,7 +267,7 @@ function Login({ setAuth }) {
   return (
     <div className="login-container">
       {/* Theme Toggle Button */}
-      <button className="theme-toggle" onClick={toggleTheme}>
+      <button className="theme-toggle" onClick={toggleTheme} style={{position:'absolute'}}>
         <i className={`fas ${isDark ? 'fa-sun' : 'fa-moon'} theme-icon`}></i>
       </button>
 
@@ -275,8 +275,8 @@ function Login({ setAuth }) {
       <div className="login-content">
         {/* Logo and Title */}
         <div className="login-header">
-          <div className="logo-container">
-            <i className="fas fa-stethoscope logo-icon"></i>
+          <div className="logo-container" style={{padding:'0'}}>
+            <i className="fas fa-stethoscope logo-icon" style={{paddingTop:'10px',width:'fit-content',paddingLeft:'10px',paddingRight:'10px'}}></i>
           </div>
           <h2 className="login-title">Welcome to HealthCare</h2>
           <p className="login-subtitle">Sign in to your account to continue</p>
@@ -389,10 +389,19 @@ function Login({ setAuth }) {
           </div> */}
 
           {/* Success Message */}
-          <div className={`message success-message ${successMessage ? 'show' : ''}`}>
+          {/* <div className={`message success-message ${successMessage ? 'show' : ''}`}>
             <i className="fas fa-check-circle message-icon"></i>
             <span>{successMessage}</span>
-          </div>
+          </div> */}
+
+            {/* Success Message */}
+            {/* {successMessage && (
+              <div className="message success-message show">
+                <i className="fas fa-check-circle message-icon"></i>
+                <span>{successMessage}</span>
+              </div>
+            )} */}
+
 
             {/* Login Button */}
             <button

@@ -925,7 +925,7 @@ if (phone && phone.length < 10) {
             <div className="logo-icon">
               <i className="fas fa-heartbeat"></i>
             </div>
-            <span>MedAdmin</span>
+            <span>MedicNotes</span>
           </div>
         </div>
 
@@ -988,6 +988,7 @@ if (phone && phone.length < 10) {
             className="theme-toggle"
             id="themeToggle"
             title="Toggle theme"
+            style={{marginTop:'-50px'}}
           >
             <i className="fas fa-sun" id="themeIcon"></i>
           </button>
@@ -1039,7 +1040,6 @@ if (phone && phone.length < 10) {
                   <i className="fas fa-sign-out-alt"></i>
                   <span>Sign Out</span>
                 </div>
-                <div onClick={hellot}>hellot</div>
               </div>
             )}
 
