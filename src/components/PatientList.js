@@ -366,7 +366,7 @@ const PatientList = () => {
           ) : (
             <div className="cards-grid">
               {filteredPatients.map((patient, index) => (
-                <div key={patient.id || `patient-${index}`} className="patient-card">
+                <div key={patient.patientId || `patient-${index}`} className="patient-card">
                   <div className="card-header">
                     <div className="patient-image">
                       {patient.patientImage ? (

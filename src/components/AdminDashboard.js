@@ -56,6 +56,20 @@ useEffect(() => {
   fetchStats();
 }, []);
 
+const hellot = () => {
+
+   // Remove specific keys from localStorage
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userSession');
+    localStorage.removeItem('userId');
+
+    // Optional: Clear everything
+    // localStorage.clear();
+
+    // Navigate to login or home
+    navigate('/login'); // or navigate('/')
+  };
+
   const handleLogout = () => {
     console.log('AdminDashboard: handleLogout called');
     try {
@@ -1014,7 +1028,7 @@ if (phone && phone.length < 10) {
                   <span>Settings</span>
                 </div>
                 <div className="dropdown-divider"></div>
-                <div className="dropdown-item signout-item" onClick={(e) => {
+                <div className="dropdown-item signout-item" onKeyPress={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                   console.log('Logout button clicked');
@@ -1025,6 +1039,7 @@ if (phone && phone.length < 10) {
                   <i className="fas fa-sign-out-alt"></i>
                   <span>Sign Out</span>
                 </div>
+                <div onClick={hellot}>hellot</div>
               </div>
             )}
 
