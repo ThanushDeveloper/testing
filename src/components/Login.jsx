@@ -373,12 +373,20 @@ function Login({ setAuth }) {
               </a>
             </div>
 
+            {/* Error Message */}
+            {errorMessage && (
+              <div className="message error-message show">
+                <i className="fas fa-exclamation-circle message-icon"></i>
+                <span>{errorMessage}</span>
+              </div>
+            )}
 
-             {/* Error Message */}
+{/* 
+             Error Message
           <div className={`message error-message ${errorMessage ? 'show' : ''}`}>
             <i className="fas fa-exclamation-circle message-icon"></i>
             <span>{errorMessage}</span>
-          </div>
+          </div> */}
 
           {/* Success Message */}
           <div className={`message success-message ${successMessage ? 'show' : ''}`}>
