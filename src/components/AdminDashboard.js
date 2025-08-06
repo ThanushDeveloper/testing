@@ -23,6 +23,7 @@ const [adminCount, setAdminCount] = useState(0);
 const [prescriptionCount, setPrescriptionCount] = useState(0);
 const [showUserDropdown, setShowUserDropdown] = useState(false);
 const [showProfileModal, setShowProfileModal] = useState(false);
+const [adminName, setAdminName] = useState('N/A');
 
 useEffect(() => {
   const fetchStats = async () => {
@@ -53,8 +54,29 @@ useEffect(() => {
     }
   };
 
+  const fetchAdminName = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const userId = localStorage.getItem("userId");
+
+      if (userId) {
+        const response = await axios.get(`http://localhost:8080/admin/get/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.data && response.data.name) {
+          setAdminName(response.data.name);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching admin name:", error);
+      // Keep the default 'N/A' value if there's an error
+    }
+  };
+
   fetchStats();
-}, []);
+  fetchAdminName();
+}, [auth]);
 
 const hellot = () => {
 
@@ -1011,7 +1033,7 @@ if (phone && phone.length < 10) {
               )}
             </div>
             <div className="user-info">
-              <div className="user-name">{localStorage.getItem('userId') || auth?.user?.id || 'N/A'}</div>
+              <div className="user-name">{adminName}</div>
               <div className="user-role">{auth?.role || 'Admin'}</div>
             </div>
             <i
