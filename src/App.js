@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Home from "./components/Home";
 import Login from "./components/Login";
 import AdminDashboard from "./components/AdminDashboard";
 import DoctorDashboard from "./components/DoctorDashboard";
@@ -9,7 +10,8 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredRole, userRole, isAuthenticated }) => {
   if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
+
   }
   
   if (requiredRole && userRole !== requiredRole) {
@@ -22,7 +24,7 @@ const ProtectedRoute = ({ children, requiredRole, userRole, isAuthenticated }) =
       case "PATIENT":
         return <Navigate to="/patient/dashboard" replace />;
       default:
-        return <Navigate to="/" replace />;
+        return <Navigate to="/login" replace />;
     }
   }
   
@@ -84,9 +86,15 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Login Route */}
+        {/* Home Route */}
         <Route 
           path="/" 
+          element={<Home />} 
+        />
+
+        {/* Login Route */}
+        <Route 
+          path="/login" 
           element={
             auth.isAuthenticated ? (
               // Redirect authenticated users to their dashboard
@@ -143,8 +151,7 @@ function App() {
             </ProtectedRoute>
           } 
         />
-        
-        {/* Catch all route - redirect to login */}
+        {/* Catch all route - redirect to home */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
