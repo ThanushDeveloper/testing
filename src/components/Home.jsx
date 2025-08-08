@@ -1,9 +1,24 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Home.css";
 
 function Home() {
   const navigate = useNavigate();
+  const [theme, setTheme] = useState("light");
+
+  // Theme management
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+  };
 
   const handleLoginClick = () => {
     navigate("/login");
@@ -18,6 +33,9 @@ function Home() {
             <h1>Medic Notes</h1>
           </div>
           <nav className="nav">
+            <button className="theme-toggle-Home" onClick={toggleTheme} title="Toggle theme">
+              <i className={`fas ${theme === 'dark' ? 'fa-sun' : 'fa-moon'} theme-icon`}></i>
+            </button>
             <button className="login-btn" onClick={handleLoginClick}>
               Login
             </button>
