@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import AdminDashboard from "./components/AdminDashboard";
 import DoctorDashboard from "./components/DoctorDashboard";
 import PatientDashboard from "./components/PatientDashboard";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 
 // Protected Route Component
@@ -84,77 +85,79 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <Routes>
-        {/* Home Route */}
-        <Route 
-          path="/" 
-          element={<Home />} 
-        />
+    <ThemeProvider>
+      <Router>
+        <Routes>
+          {/* Home Route */}
+          <Route 
+            path="/" 
+            element={<Home />} 
+          />
 
-        {/* Login Route */}
-        <Route 
-          path="/login" 
-          element={
-            auth.isAuthenticated ? (
-              // Redirect authenticated users to their dashboard
-              <Navigate 
-                to={`/${auth.role.toLowerCase()}/dashboard`} 
-                replace 
-              />
-            ) : (
-              <Login setAuth={setAuth} />
-            )
-          } 
-        />
-        
-        {/* Admin Dashboard Route */}
-        <Route 
-          path="/admin/dashboard" 
-          element={
-            <ProtectedRoute 
-              requiredRole="ADMIN" 
-              userRole={auth.role} 
-              isAuthenticated={auth.isAuthenticated}
-            >
-              <AdminDashboard auth={auth} setAuth={setAuth} onLogout={handleLogout} />
-            </ProtectedRoute>
-          } 
-        />
-        
-        {/* Doctor Dashboard Route */}
-        <Route 
-          path="/doctor/dashboard" 
-          element={
-            <ProtectedRoute 
-              requiredRole="DOCTOR" 
-              userRole={auth.role} 
-              isAuthenticated={auth.isAuthenticated}
-            >
-              <DoctorDashboard auth={auth} setAuth={setAuth} onLogout={handleLogout} />
+          {/* Login Route */}
+          <Route 
+            path="/login" 
+            element={
+              auth.isAuthenticated ? (
+                // Redirect authenticated users to their dashboard
+                <Navigate 
+                  to={`/${auth.role.toLowerCase()}/dashboard`} 
+                  replace 
+                />
+              ) : (
+                <Login setAuth={setAuth} />
+              )
+            } 
+          />
+          
+          {/* Admin Dashboard Route */}
+          <Route 
+            path="/admin/dashboard" 
+            element={
+              <ProtectedRoute 
+                requiredRole="ADMIN" 
+                userRole={auth.role} 
+                isAuthenticated={auth.isAuthenticated}
+              >
+                <AdminDashboard auth={auth} setAuth={setAuth} onLogout={handleLogout} />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* Doctor Dashboard Route */}
+          <Route 
+            path="/doctor/dashboard" 
+            element={
+              <ProtectedRoute 
+                requiredRole="DOCTOR" 
+                userRole={auth.role} 
+                isAuthenticated={auth.isAuthenticated}
+              >
+                <DoctorDashboard auth={auth} setAuth={setAuth} onLogout={handleLogout} />
 
-            </ProtectedRoute>
-          } 
-        />
-        
-        {/* Patient Dashboard Route */}
-        <Route 
-          path="/patient/dashboard" 
-          element={
-            <ProtectedRoute 
-              requiredRole="PATIENT" 
-              userRole={auth.role} 
-              isAuthenticated={auth.isAuthenticated}
-            >
-              <PatientDashboard auth={auth} setAuth={setAuth} onLogout={handleLogout} />
+              </ProtectedRoute>
+            } 
+          />
+          
+          {/* Patient Dashboard Route */}
+          <Route 
+            path="/patient/dashboard" 
+            element={
+              <ProtectedRoute 
+                requiredRole="PATIENT" 
+                userRole={auth.role} 
+                isAuthenticated={auth.isAuthenticated}
+              >
+                <PatientDashboard auth={auth} setAuth={setAuth} onLogout={handleLogout} />
 
-            </ProtectedRoute>
-          } 
-        />
-        {/* Catch all route - redirect to home */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Router>
+              </ProtectedRoute>
+            } 
+          />
+          {/* Catch all route - redirect to home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }
 
