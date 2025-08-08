@@ -278,7 +278,7 @@ function Login({ setAuth }) {
           <div className="logo-container" style={{padding:'0'}}>
             <i className="fas fa-stethoscope logo-icon" style={{paddingTop:'10px',width:'fit-content',paddingLeft:'10px',paddingRight:'10px'}}></i>
           </div>
-          <h2 className="login-title">Welcome to HealthCare</h2>
+          <h2 className="login-title">Welcome to MedicNotes</h2>
           <p className="login-subtitle">Sign in to your account to continue</p>
         </div>
 

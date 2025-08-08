@@ -37,7 +37,8 @@ function DoctorDashboard({ auth, setAuth, onLogout }) {
 
   return (
     <div className="dashboard-container" data-theme="light">
-      {/* Header */}
+      helo
+      {/* Header
       <header className="header">
         <div className="header-left">
           <div className="search-container">
@@ -97,9 +98,9 @@ function DoctorDashboard({ auth, setAuth, onLogout }) {
           </div>
         </div>
       </header>
-
+*/}
       {/* Main Content */}
-      <main className="main-content">
+   {/*   <main className="main-content">
         <div style={{ padding: "2rem", backgroundColor: "#e8f5e9", minHeight: "calc(100vh - 80px)" }}>
           <h1>👨‍⚕️ Doctor Dashboard</h1>
           <p>
@@ -218,7 +219,7 @@ function DoctorDashboard({ auth, setAuth, onLogout }) {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
