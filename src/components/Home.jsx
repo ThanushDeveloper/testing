@@ -121,6 +121,113 @@ function Home() {
         </div>
       </section>
 
+
+      
+      {/* Impact Stats */}
+      <section className="stats">
+        <div className="stats-content">
+          <div className="stats-grid">
+            <div className="stat-card">
+              <div className="stat-value">500+</div>
+              <div className="stat-label">Verified Doctors</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-value">10k+</div>
+              <div className="stat-label">Active Patients</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-value">99.99%</div>
+              <div className="stat-label">Platform Uptime</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-value">HIPAA</div>
+              <div className="stat-label">GDPR Ready</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="how-it-works">
+        <div className="how-content">
+          <h2 className="section-title">How Medic Notes Works</h2>
+          <div className="steps-grid">
+            <div className="step-card">
+              <div className="step-icon"><i className="fas fa-user-plus"></i></div>
+              <h3>Create Your Account</h3>
+              <p>Sign up as a Doctor, Patient, or Hospital to get a tailored experience.</p>
+            </div>
+            <div className="step-card">
+              <div className="step-icon"><i className="fas fa-link"></i></div>
+              <h3>Connect & Manage</h3>
+              <p>Link profiles, manage records, appointments, and prescriptions securely.</p>
+            </div>
+            <div className="step-card">
+              <div className="step-icon"><i className="fas fa-chart-line"></i></div>
+              <h3>Track & Improve</h3>
+              <p>Monitor health progress and insights to enhance outcomes.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* Security */}
+      <section className="security">
+        <div className="security-content">
+          <h2 className="section-title">Enterprise‑grade Security</h2>
+          <div className="security-grid">
+            <div className="security-card">
+              <i className="fas fa-lock"></i>
+              <h3>Data Encryption</h3>
+              <p>End‑to‑end encryption in transit and at rest using industry standards.</p>
+            </div>
+            <div className="security-card">
+              <i className="fas fa-shield-alt"></i>
+              <h3>Access Controls</h3>
+              <p>Role‑based access with audit logs to protect sensitive information.</p>
+            </div>
+            <div className="security-card">
+              <i className="fas fa-file-contract"></i>
+              <h3>Compliance</h3>
+              <p>Designed with HIPAA/GDPR best practices and regional regulations.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="testimonials">
+        <div className="testimonials-content">
+          <h2 className="section-title">Trusted by Clinicians and Patients</h2>
+          <div className="testimonials-grid">
+            <div className="testimonial-card">
+              <div className="avatar">DR</div>
+              <p className="quote">“Medic Notes has streamlined my consultations and reduced paperwork.”</p>
+              <p className="author">Dr. R. Sharma, Cardiologist</p>
+            </div>
+            <div className="testimonial-card">
+              <div className="avatar">AN</div>
+              <p className="quote">“I can access my prescriptions anywhere—super convenient.”</p>
+              <p className="author">Anita N., Patient</p>
+            </div>
+            <div className="testimonial-card">
+              <div className="avatar">HM</div>
+              <p className="quote">“Easy onboarding and great visibility across departments.”</p>
+              <p className="author">Hospital Manager</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Call-to-Action */}
+      <section className="cta-banner">
+        <div className="cta-content">
+          <h2>Ready to modernize your medical workflow?</h2>
+          <p>Join Medic Notes and digitize your healthcare operations today.</p>
+          <button className="cta-btn" onClick={handleLoginClick}>Create your free account</button>
+        </div>
+      </section>
+
+
       {/* Footer */}
       <footer className="footer">
         <div className="footer-content">
@@ -151,3 +258,5 @@ function Home() {
 }
 
 export default Home;
+
+
